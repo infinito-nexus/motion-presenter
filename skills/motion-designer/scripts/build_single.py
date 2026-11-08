@@ -34,7 +34,8 @@ html = re.sub(r'(<(img|audio|source|video)\b[^>]*\bsrc=")([^"]+)(")',
               lambda m: m[1] + ("" if no_audio and m[2] in ("audio", "source") else data_uri(root / m[3])) + m[4] if local(m[3]) else m[0], html)
 
 left = [r for r in re.findall(r'(?:src|href)="([^"]+)"', html) if not r.startswith(("data:", "${", "#"))]
-assert not left, f"still external: {left}"
+if left:
+    raise SystemExit(f"still external: {left}")
 out.parent.mkdir(parents=True, exist_ok=True)
 out.write_text(html)
 print(out, f"{out.stat().st_size / 1e6:.1f} MB")

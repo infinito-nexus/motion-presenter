@@ -48,11 +48,11 @@ def run(*args, **kw):
 
 
 def digest(*parts):
-    return hashlib.sha1(json.dumps(parts, sort_keys=True, default=str).encode()).hexdigest()[:16]
+    return hashlib.sha1(json.dumps(parts, sort_keys=True, default=str).encode(), usedforsecurity=False).hexdigest()[:16]
 
 
 def code_key(src):
-    h = hashlib.sha1()
+    h = hashlib.sha1(usedforsecurity=False)
     for p in sorted(src.iterdir()):
         if p.is_file() and p.name != "timing.js":
             h.update(p.name.encode())

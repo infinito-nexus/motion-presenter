@@ -253,15 +253,18 @@ def main():
             clip = trimmed(cache / f"{ln['id']}.wav", tmp / f"{ln['id']}.wav")
             got = duration(clip)
             gap = longest_gap(clip)
-            assert gap <= MAX_PAUSE, f"{ln['id']} {ln['text']!r}: a {gap:.2f}s gap inside the take survived the {MAX_PAUSE}s cap"
+            if gap > MAX_PAUSE:
+                raise ValueError(f"{ln['id']} {ln['text']!r}: a {gap:.2f}s gap inside the take survived the {MAX_PAUSE}s cap")
             limit = ln.get("until", nxt - 0.05)
             if ln.get("until") and ln["start"] + got > limit:
                 tempo = got / (limit - ln["start"])
-                assert tempo <= 1.2, f"{ln['id']} {ln['text']!r}: {got:.2f}s cannot fit before {limit:.2f}s"
+                if tempo > 1.2:
+                    raise ValueError(f"{ln['id']} {ln['text']!r}: {got:.2f}s cannot fit before {limit:.2f}s")
                 clip = tmp / f"{ln['id']}.fit.wav"
                 run("ffmpeg", "-v", "error", "-y", "-i", tmp / f"{ln['id']}.wav", "-af", f"atempo={tempo:.4f}", clip)
                 got = duration(clip)
-            assert ln["start"] + got <= limit + 0.1, f"{ln['id']} {ln['text']!r} ends at {ln['start'] + got:.2f}s, past {limit:.2f}s"
+            if ln["start"] + got > limit + 0.1:
+                raise ValueError(f"{ln['id']} {ln['text']!r} ends at {ln['start'] + got:.2f}s, past {limit:.2f}s")
             print(f"{ln['start']:6.2f}–{ln['start'] + got:6.2f}s  {ln['voice']:9s} {ln['text']}")
             clips.append((ln["start"], clip))
             speech.append((ln["start"], ln["start"] + got))

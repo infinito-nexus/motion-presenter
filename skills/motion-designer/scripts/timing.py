@@ -25,7 +25,7 @@ FIRST_LEAD = 0.6
 def take_key(line, settings, backend):
     """Args: a script line, its voice's settings, the backend. Output: the cache key of its take."""
     blob = json.dumps([line["text"], settings, backend], sort_keys=True)
-    return hashlib.sha1(blob.encode()).hexdigest()[:16]
+    return hashlib.sha1(blob.encode(), usedforsecurity=False).hexdigest()[:16]
 
 
 def snap_half_beat(x, bpm, least):

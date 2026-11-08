@@ -19,9 +19,11 @@ def main():
     start = g["bar1"] + (a.from_bar - 1) * bar_len
     frames = round(a.bars * bar_len * a.fps)
     length = frames / a.fps
-    assert start >= 0, f"bar {a.from_bar} starts before the track does"
+    if start < 0:
+        raise ValueError(f"bar {a.from_bar} starts before the track does")
     last = max(b["bar"] for b in g["bars"])
-    assert a.from_bar + a.bars - 1 <= last, f"the track has {last} whole bars; bars {a.from_bar}–{a.from_bar + a.bars - 1} run past it"
+    if a.from_bar + a.bars - 1 > last:
+        raise ValueError(f"the track has {last} whole bars; bars {a.from_bar}–{a.from_bar + a.bars - 1} run past it")
 
     af = (f"aresample=44100,apad,atrim=end_sample={round(length * 44100)},"
           f"afade=t=in:d=0.006,afade=t=out:st={length - 0.012:.6f}:d=0.012")

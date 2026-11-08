@@ -129,11 +129,19 @@ def ace(*args, log):
         raise SystemExit("\n".join(Path(log).read_text().splitlines()[-15:]) + f"\nACE-Step stopped; its log is {log}")
 
 
+def server_url(route):
+    url = urllib.parse.urljoin(URL + "/", route)
+    target, server = urllib.parse.urlsplit(url), urllib.parse.urlsplit(URL)
+    if target.scheme not in ("http", "https") or (target.scheme, target.netloc) != (server.scheme, server.netloc):
+        raise SystemExit(f"refusing a {target.scheme} URL on {target.hostname}: only the server in MOTION_DESIGNER_ACESTEP_URL is called")
+    return url
+
+
 def remote(spec, names, out):
     def call(route, body=None):
         headers = {"Content-Type": "application/json", **({"Authorization": f"Bearer {KEY}"} if KEY else {})}
         data = json.dumps(body).encode() if body is not None else None
-        with urllib.request.urlopen(urllib.request.Request(urllib.parse.urljoin(URL + "/", route), data=data, headers=headers), timeout=120) as r:
+        with urllib.request.urlopen(urllib.request.Request(server_url(route), data=data, headers=headers), timeout=120) as r:
             return r.read()
 
     m, tasks, t0 = meta(spec), {}, time.time()
