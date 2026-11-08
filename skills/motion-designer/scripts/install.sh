@@ -9,7 +9,7 @@ has() { command -v "$1" >/dev/null 2>&1; }
 
 run() {
   echo "+ $*"
-  [ "$dry" = 1 ] || eval "$@"
+  [ "$dry" = 1 ] || eval "$*"
 }
 
 pkg() {

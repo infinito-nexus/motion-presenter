@@ -1,5 +1,6 @@
 (function () {
   const params = new URLSearchParams(location.search);
+  FILM.preview = params.has("preview");
   const stage = document.getElementById("stage");
   Object.assign(stage.style, { width: FILM.W + "px", height: FILM.H + "px" });
 

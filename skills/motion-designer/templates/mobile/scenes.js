@@ -78,7 +78,7 @@ function applyWord(t) {
   $.wmClip.style.clipPath = t < B(15.5) ? `inset(0 ${((WM.textW + 8) * gather).toFixed(2)}px 0 0)` : "none";
   setT($.wm, `translateY(${(t >= B(15.5) ? (1 - clamp(back, 0, 1.2)) * 110 : 0).toFixed(2)}%)`);
   const slIn = spring(t, B(16), 0.5, 0.88);
-  setT($.sl, `translateY(${(t >= B(16) ? (1 - slIn) * 105 : prog(t, B(2), 0.3, E.in) * 105).toFixed(2)}%)`);
+  setT($.sl, TRAVEL(t >= B(16) ? 1 - slIn : prog(t, B(2), 0.3, E.in)));
   show($.slClip, t < B(3) || t >= B(16));
 
   let x = WM.dotX, y = WM.dotY, s = 1 + 0.1 * pulse(t, B(1), 0.32), on = true;

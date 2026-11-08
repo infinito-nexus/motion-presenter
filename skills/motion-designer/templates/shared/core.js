@@ -2,12 +2,27 @@ const FILM = {};
 const HOLDS = [];
 
 function film({ W = 1440, H = 1440, FPS = 60, BPM = 120, BEATS, holds = [] }) {
-  Object.assign(FILM, { W, H, FPS, BPM, BEATS, P: 60 / BPM });
-  FILM.frames = Math.round(BEATS * FILM.P * FPS);
+  const timed = BEATS === undefined;
+  if (timed && !window.TIMING) throw new Error("film() without BEATS is timed by the voice: run voiceover.py to write timing.js");
+  Object.assign(FILM, { W, H, FPS, BPM: timed ? window.TIMING.bpm : BPM, P: 60 / (timed ? window.TIMING.bpm : BPM) });
+  FILM.frames = timed ? Math.round(window.TIMING.duration * FPS) : Math.round(BEATS * FILM.P * FPS);
   FILM.DURATION = FILM.frames / FPS;
+  FILM.BEATS = timed ? FILM.DURATION / FILM.P : BEATS;
   HOLDS.splice(0, HOLDS.length, ...holds);
 }
 const B = (b) => (b + HOLDS.reduce((s, [at, len]) => s + (b >= at ? len : 0), 0) - 1) * FILM.P;
+
+function line(id) {
+  const l = window.TIMING && window.TIMING.lines[id];
+  if (!l) throw new Error(`no line ${id} in timing.js: add it to voiceover.json and run voiceover.py`);
+  return l;
+}
+
+function scene(id) {
+  const s = window.TIMING && window.TIMING.scenes.find((x) => x.id === id);
+  if (!s) throw new Error(`no scene ${id} in timing.js: add it to voiceover.json and run voiceover.py`);
+  return s;
+}
 
 const clamp = (v, a = 0, b = 1) => (v < a ? a : v > b ? b : v);
 const lerp = (a, b, p) => a + (b - a) * p;
@@ -88,8 +103,10 @@ function collect(root) {
 
 const show = (el, on) => { el.style.visibility = on ? "" : "hidden"; };
 const setT = (el, v) => { el.style.transform = v; };
-const rise = (el, p) => setT(el, `translateY(${((1 - p) * 105).toFixed(2)}%)`);
-const sink = (el, p) => setT(el, `translateY(${(-p * 105).toFixed(2)}%)`);
+const MASK_PAD_EM = 0.4;
+const TRAVEL = (p) => `translateY(calc(${(p * 100).toFixed(2)}% + ${(p * 2 * MASK_PAD_EM).toFixed(3)}em))`;
+const rise = (el, p) => setT(el, TRAVEL(1 - p));
+const sink = (el, p) => setT(el, TRAVEL(-p));
 const T = (x, y, s = 1) => `translate(${x.toFixed(2)}px,${y.toFixed(2)}px) scale(${s.toFixed(4)})`;
 const mixRect = (a, b, p) => ({ x: lerp(a.x, b.x, p), y: lerp(a.y, b.y, p), w: lerp(a.w, b.w, p), h: lerp(a.h, b.h, p), r: lerp(a.r, b.r, p) });
 
@@ -134,11 +151,11 @@ function roll(r, t, steps, dur = 0.34) {
   const p = prog(t, cur.t, dur, E.snappy);
   if (!prev || p >= 1) {
     put(r.a, 0, cur.v); show(r.a, true); show(r.b, false);
-    setT(r.a, prev ? "none" : `translateY(${((1 - prog(t, cur.t, dur, E.out)) * 105).toFixed(2)}%)`);
+    setT(r.a, prev ? "none" : TRAVEL(1 - prog(t, cur.t, dur, E.out)));
     return;
   }
   put(r.a, 0, prev.v); put(r.b, 1, cur.v);
   show(r.a, true); show(r.b, true);
-  setT(r.a, `translateY(${(-p * 105).toFixed(2)}%)`);
-  setT(r.b, `translateY(${((1 - p) * 105).toFixed(2)}%)`);
+  setT(r.a, TRAVEL(-p));
+  setT(r.b, TRAVEL(1 - p));
 }

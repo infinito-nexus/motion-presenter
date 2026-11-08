@@ -21,8 +21,8 @@ function apply(t) {
   const lin = prog(t, B(2), 0.45, E.out), lout = prog(t, B(13), 0.4, E.in);
   setT($.bar, `scaleY(${(lin * (1 - lout)).toFixed(4)})`);
   $.bar.style.transformOrigin = "50% 100%";
-  setT($.name, `translateY(${(t < B(13) ? (1 - prog(t, B(2) + 0.15, 0.5, E.out)) * 105 : prog(t, B(13), 0.35, E.in) * 105).toFixed(2)}%)`);
-  setT($.role, `translateY(${(t < B(13) ? (1 - prog(t, B(2) + 0.3, 0.5, E.out)) * 105 : prog(t, B(13) + 0.05, 0.35, E.in) * 105).toFixed(2)}%)`);
+  setT($.name, TRAVEL(t < B(13) ? 1 - prog(t, B(2) + 0.15, 0.5, E.out) : prog(t, B(13), 0.35, E.in)));
+  setT($.role, TRAVEL(t < B(13) ? 1 - prog(t, B(2) + 0.3, 0.5, E.out) : prog(t, B(13) + 0.05, 0.35, E.in)));
 
   const on = t >= WORDS[0][1] - 0.2 && t < LINE_END;
   show($.cap, on);

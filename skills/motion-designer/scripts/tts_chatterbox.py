@@ -61,17 +61,20 @@ for line in lines:
         kw["audio_prompt_path"] = turbo_sample(line["voice"])
     elif sample:
         kw["audio_prompt_path"] = sample
+    lo, hi = line.get("fit", (0.8, 1.3))
     takes = []
     for seed in SEEDS:
+        seed += len(SEEDS) * line.get("attempt", 0)
         torch.manual_seed(seed)
         wav = model().generate(line["text"], **kw)
         m = measure(wav, model().sr)
-        usable = 0.8 <= m["length"] / line["plain"] <= 1.6 and m["gap"] < 0.6
-        takes.append((not usable, abs(m["range"] - 8), seed, wav, m))
+        ratio = m["length"] / line["plain"]
+        miss = max(lo - ratio, ratio - hi, 0)
+        takes.append((miss, abs(m["range"] - 8), seed, wav, m))
     takes.sort(key=lambda x: (x[0], x[1]))
-    unusable, _, seed, wav, m = takes[0]
-    if unusable:
-        raise SystemExit(f"{line['id']} {line['text']!r}: no usable take in {[t[4] for t in takes]}; reword the line")
+    miss, _, seed, wav, m = takes[0]
+    if miss:
+        print(f"{line['id']}: no take within {lo}-{hi}x, keeping the closest", flush=True)
     torchaudio.save(str(cache / f"{line['id']}.wav"), wav, model().sr)
     report[line["id"]] = {"seed": seed, "text": line["text"], **m}
     print(f"{line['id']}: take {seed}, {m['length']:.2f}s, pitch range {m['range']:.1f} semitones  {line['text']}", flush=True)

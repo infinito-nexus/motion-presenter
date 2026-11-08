@@ -18,31 +18,40 @@ Suggest Chatterbox for a brand narrator that should sound human and stay the sam
 ## 1. Write the lines
 
 - One idea per line, 4–12 words, in the viewer's language. It names what the screen is showing right then.
-- A line starts a beat or half a beat after the action it describes (never before it) and ends before the next action. Leave at least a second between lines; speech should fill well under two thirds of the film.
+- The voice times the film: lines have no start times. Group them into scenes; the picture follows `line(id)` and `scene(id)` from `timing.js`.
 - Numbers, currencies and names as they should be said: "four fifty", "twelve dollars", and a name the model misreads spelled the way it sounds.
-- Words that must match text on screen get `"until"`: the line is sped up by at most 1.2× to finish by then.
-- Show the lines and their times to the user before generating the final voice.
+- Show the lines and their scenes to the user before generating the final voice.
 
 ## 2. The script
 
-`voiceover.json` in the film folder (paths are relative to it; `frames`/`fps` from `FILM_INFO`):
+`voiceover.json` in the film folder (paths are relative to it):
 
 ```json
 {
-  "frames": 2791, "fps": 60,
+  "fps": 60, "bpm": 110,
   "music": "audio/edit.wav",
   "out": "audio/voiceover-mix",
   "backend": "chatterbox",
   "voices": {
     "narrator": {"sample": "turbo", "exaggeration": 0.62, "cfg_weight": 0.35, "say": "Samantha"}
   },
+  "scenes": [
+    {"id": "intro", "music": 3.0},
+    {"id": "spend", "lines": ["n01", "n02"]},
+    {"id": "end", "lines": ["n03"], "min": 4}
+  ],
   "lines": [
-    {"id": "n01", "start": 1.2, "voice": "narrator", "text": "This is where your money goes."},
-    {"id": "n02", "start": 9.4, "voice": "narrator", "text": "Say it, and it's saved.", "until": 11.0}
+    {"id": "n01", "voice": "narrator", "text": "This is where your money goes."},
+    {"id": "n02", "voice": "narrator", "text": "Say it, and it's saved.", "hold": 0.5},
+    {"id": "n03", "voice": "narrator", "text": "Next up: budgets that plan themselves."}
   ],
   "mix": {"music_gain": 0.26, "duck_ratio": 2.8, "lufs": -16}
 }
 ```
+
+Layout: lines in a scene are 0.35 s apart, a scene change leaves 0.8 s, scene ends snap to the nearest half beat. `"music": s` is a scene without lines (intro or outro under music). `"hold": s` leaves room after a line, `"min": s` keeps a scene at least that long, `"clip": [from, to]` shows that part of `"footage": {"src": ...}` during the line. `"captions": true|false` overrides the captions default. The run writes `timing.json`, `words.json` and `src/timing.js`, and prints the first scene whose timing changed.
+
+A script without `"scenes"` (a v1 film) keeps its fixed `"start"` times, `"frames"` and `"until"`: the line is sped up by at most 1.2× to finish by then.
 
 A voice can carry settings for every engine, so switching `backend` changes nothing else.
 
@@ -59,8 +68,8 @@ python3 $SKILL_DIR/scripts/voiceover.py voiceover.json                 # the fin
 
 - Chatterbox needs a one-time setup: its own Python 3.11 environment with PyTorch, about 4 GB with the weights (8 GB once a voice uses the Turbo sample), downloaded once. Ask the user first, then `bash $SKILL_DIR/scripts/install.sh chatterbox` (it needs uv; see [setup](setup.md)). An existing environment: `MOTION_DESIGNER_TTS_PYTHON=/path/bin/python`.
 - Kokoro needs a smaller one-time setup: its own Python environment with kokoro-onnx and the model files, about 0.6 GB. Ask first, then `bash $SKILL_DIR/scripts/install.sh kokoro`. An existing one: `MOTION_DESIGNER_KOKORO_PYTHON=/path/bin/python`, and `MOTION_DESIGNER_KOKORO_MODELS=/dir` for `kokoro-v1.0.onnx` and `voices-v1.0.bin`.
-- Chatterbox speaks each line three times; the take whose intonation moves most like speech is kept (`out/voiceover/chatterbox/takes.json` says why). Kokoro speaks a line the same way every time, so it takes one. Takes are cached in `out/voiceover/<backend>/`; delete a line's `.wav` there to speak it again, or change its text.
-- Every take is checked: its length against a plain reading (0.7–1.7×), no gap over 0.7 s inside it, and it must end before its `until` or the next line. A failing line stops the run with the reason. Reword it or move it.
+- Chatterbox speaks each line three times; the take whose intonation moves most like speech is kept (`out/voiceover/chatterbox/takes.json` says why). Kokoro speaks a line the same way every time, so it takes one. Takes are cached in `out/voiceover/<backend>/` with a `.key` of the text and voice settings; a changed line is spoken again on its own (`cache miss`), the rest are reused (`cache hit`). Delete a line's `.wav` to force a new take.
+- Every take is trimmed: silence before and after it is removed, and any pause inside it is cut to about 0.5 s (never more than 0.6 s). A fresh take must last 0.8–1.3× a plain reading; Chatterbox speaks a take outside that range again, up to three times, then keeps the last one with a warning. A take must also end before its `until` or the next line, or the run stops with the reason. Reword the line or move it.
 
 ## 4. Mix
 
@@ -69,6 +78,8 @@ The mix is built in: a light voice chain (high-pass, presence, compression, de-e
 ```
 voice 17.9 dB above the music while speaking; music between lines -7.0 dB against the voice
 ```
+
+The music comes back about 0.3 s after the voice stops (sidechain release 300 ms). The voice-only stem is kept as `out/voiceover/voice-stem.wav` for the silence check (`scripts/silence.py <film>`: a warning over 1.2 s without speech, a failure over 2.5 s, music-only scenes and the intro and outro excepted).
 
 Aim for 16–20 dB while speaking and −5 to −9 dB between lines. Too much music: lower `music_gain` by 0.04 or raise `duck_ratio`; music too faint between lines: raise `music_gain`. Tell the user the two numbers when you change them.
 

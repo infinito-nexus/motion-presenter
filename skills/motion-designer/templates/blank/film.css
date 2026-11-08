@@ -28,7 +28,7 @@ html, body {
 .abs { position: absolute; }
 .row { display: flex; align-items: center; }
 .center { display: flex; align-items: center; justify-content: center; }
-.mask { overflow: hidden; }
+.mask { clip-path: inset(-.4em 0); }
 .t { display: inline-block; white-space: nowrap; line-height: 1.2; vertical-align: top; }
 .shot { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: hidden; background: var(--bg); }
 .h1 { font-size: 132px; font-weight: 800; letter-spacing: -0.045em; }

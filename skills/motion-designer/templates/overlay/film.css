@@ -28,7 +28,7 @@ html, body {
 .abs { position: absolute; }
 .row { display: flex; align-items: center; }
 .center { display: flex; align-items: center; justify-content: center; }
-.mask { overflow: hidden; }
+.mask { clip-path: inset(-.4em 0); }
 .t { display: inline-block; white-space: nowrap; line-height: 1.2; vertical-align: top; }
 .kicker { font-size: 26px; font-weight: 600; letter-spacing: 0.14em; color: var(--ink3); }
 .pill { background: rgba(12, 13, 16, 0.72); border-radius: 18px; padding: 14px 26px; }

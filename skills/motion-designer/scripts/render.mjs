@@ -23,7 +23,9 @@ const underFrom = Number(flag("--under-from", 0));
 const has = (name) => (args.includes(name) ? (args.splice(args.indexOf(name), 1), true) : false);
 const deband = has("--deband");
 const phone = has("--phone");
+const preview = has("--preview");
 const blur = Math.max(1, Math.round(Number(flag("--blur", 1))));
+const fpsArg = Number(flag("--fps", 0));
 const [mode, pageArg, out, ...rest] = args;
 if (!["stills", "sheet", "video", "cues", "verify"].includes(mode) || !pageArg || !out) {
   console.error("usage: render.mjs stills <page.html> <out-dir> <t1,t2,...> [--scale 2]\n" +
@@ -31,13 +33,15 @@ if (!["stills", "sheet", "video", "cues", "verify"].includes(mode) || !pageArg |
     "       render.mjs video <page.html> <out.mp4> [--audio file] [--scale 2] [--from s] [--to s] [--crf 14] [--deband]\n" +
     "       any mode: [--under footage.mp4 [--under-from s]] draws the film with a clear background over the footage\n" +
     "       any mode: [--blur 8] averages 8 subframes a frame (a 180 degree shutter) for motion blur\n" +
+    "       video: [--fps 30] renders at another frame rate than the film's; [--scale 0.5] renders at half size\n" +
+    "       any mode: [--preview] sets FILM.preview, which turns motion-blur accumulation off\n" +
     "       render.mjs cues <page.html> <out.json>\n" +
     "       render.mjs verify <page.html> <rendered.mp4>");
   process.exit(2);
 }
 
 const open = async () => {
-  const film = await openFilm(resolve(pageArg), { scale });
+  const film = await openFilm(resolve(pageArg), { scale, preview });
   if (under) {
     await film.page.send("Emulation.setDefaultBackgroundColorOverride", { color: { r: 0, g: 0, b: 0, a: 0 } });
     await film.page.evaluate(`document.head.insertAdjacentHTML("beforeend", "<style>html,body,#stage{background:transparent!important}</style>")`);
@@ -45,6 +49,9 @@ const open = async () => {
   return film;
 };
 let { page, info } = await open();
+const FPS = fpsArg || info.FPS;
+const frames = Math.round((info.frames / info.FPS) * FPS);
+const outW = Math.round(info.W * Math.min(scale, 1)), outH = Math.round(info.H * Math.min(scale, 1));
 const shotAt = async (t) => {
   try {
     await page.evaluate(`seek(${t})`);
@@ -57,10 +64,10 @@ const shotAt = async (t) => {
     return page.screenshot();
   }
 };
-const fit = `scale=${info.W}:${info.H}:force_original_aspect_ratio=increase,crop=${info.W}:${info.H},setsar=1`;
+const fit = `scale=${outW}:${outH}:force_original_aspect_ratio=increase,crop=${outW}:${outH},setsar=1`;
 const subframes = (t) => Array.from({ length: blur }, (_, k) =>
-  Math.min(info.frames / info.FPS, Math.max(0, t + ((k + 0.5) / blur - 0.5) * (0.5 / info.FPS))));
-const blurChain = blur > 1 ? `tmix=frames=${blur},select=not(mod(n+1\\,${blur})),setpts=N/${info.FPS}/TB` : "";
+  Math.min(info.frames / info.FPS, Math.max(0, t + ((k + 0.5) / blur - 0.5) * (0.5 / FPS))));
+const blurChain = blur > 1 ? `tmix=frames=${blur},select=not(mod(n+1\\,${blur})),setpts=N/${FPS}/TB` : "";
 const blurredAt = async (t) => {
   if (blur === 1) return shotAt(t);
   const shots = [];
@@ -98,19 +105,19 @@ try {
   } else if (mode === "verify") {
     await verify(out);
   } else {
-    const first = Math.round(from * info.FPS);
-    const last = toArg === null ? info.frames : Math.min(info.frames, Math.round(Number(toArg) * info.FPS));
-    const seconds = (last - first) / info.FPS;
+    const first = Math.round(from * FPS);
+    const last = toArg === null ? frames : Math.min(frames, Math.round(Number(toArg) * FPS));
+    const seconds = (last - first) / FPS;
     const down = [blurChain, scale > 1 && `scale=${info.W}:${info.H}:flags=lanczos`, deband && "gradfun=1.2:16"].filter(Boolean).join(",");
     const fg = [blurChain, scale > 1 && `scale=${info.W}:${info.H}:flags=lanczos`].filter(Boolean).join(",") || "null";
     const picture = under
-      ? ["-filter_complex", `[1:v]${fit},fps=${info.FPS}[bg];[0:v]${fg}[fg];[bg][fg]overlay=format=auto${deband ? ",gradfun=1.2:16" : ""}[v]`, "-map", "[v]"]
+      ? ["-filter_complex", `[1:v]${fit},fps=${FPS}[bg];[0:v]${fg}[fg];[bg][fg]overlay=format=auto${deband ? ",gradfun=1.2:16" : ""}[v]`, "-map", "[v]"]
       : [...(down ? ["-vf", down] : []), "-map", "0:v"];
     const sound = audio ? ["-ss", String(from), "-i", audio] : [];
     const soundMap = audio ? ["-map", `${under ? 2 : 1}:a`] : under ? ["-map", "1:a?"] : [];
     const ff = spawn("ffmpeg", [
       "-y", "-loglevel", "error",
-      "-f", "image2pipe", "-framerate", String(info.FPS * blur), "-c:v", "png", "-i", "-",
+      "-f", "image2pipe", "-framerate", String(FPS * blur), "-c:v", "png", "-i", "-",
       ...(under ? ["-ss", String(underFrom + from), "-i", under] : []),
       ...sound, ...picture, ...soundMap,
       ...(audio || under ? ["-c:a", "aac", "-b:a", "256k"] : []),
@@ -120,7 +127,7 @@ try {
     const done = new Promise((res, rej) => ff.on("exit", (c) => (c ? rej(new Error(`ffmpeg exited ${c}`)) : res())));
     const started = Date.now();
     for (let i = first; i < last; i++) {
-      for (const s of subframes(i / info.FPS)) {
+      for (const s of subframes(i / FPS)) {
         const png = await shotAt(s);
         if (!ff.stdin.write(png)) await new Promise((r) => ff.stdin.once("drain", r));
       }

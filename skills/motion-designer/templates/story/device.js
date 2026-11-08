@@ -25,7 +25,7 @@ function headlineAt(key, t, t0, out = Infinity) {
   const leave = prog(t, out, 0.35, E.in);
   for (let i = 0; i < k.words; i++) {
     const p = clamp(spring(t, t0 + i * 0.07, 0.42, 0.9), 0, 1.05);
-    setT($[key + "w" + i], `translateY(${(((1 - p) + leave) * 108).toFixed(2)}%)`);
+    setT($[key + "w" + i], TRAVEL((1 - p) + leave));
   }
   const { typed, done } = headlineTimes(key, t0);
   for (let j = 0; j < k.letters; j++) show($[key + "a" + j], t >= typed + j * 0.035 && leave < 0.5);

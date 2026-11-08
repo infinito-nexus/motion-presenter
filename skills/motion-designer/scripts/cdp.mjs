@@ -139,8 +139,8 @@ async function connect(chrome, url, { scale, width, height }, quit) {
   return { send, evaluate, screenshot, resize, close, errors };
 }
 
-export async function openFilm(pagePath, { scale = 1 } = {}) {
-  const url = `${pathToFileURL(pagePath).href}?render`;
+export async function openFilm(pagePath, { scale = 1, preview = false } = {}) {
+  const url = `${pathToFileURL(pagePath).href}?render${preview ? "&preview" : ""}`;
   const page = await openPage(url, { scale });
   try {
     const info = await page.evaluate("seek(0).then(() => window.FILM_INFO)");

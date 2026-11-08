@@ -175,7 +175,7 @@ function apply(t) {
   const clear = prog(t, K.out, 0.45, E.in);
   const iconP = clamp(spring(t, K.end + 0.35, 0.45, 0.72), 0, 1.1);
   setT($.icon, `scale(${(iconP * (1 - clear)).toFixed(4)})`);
-  setT($.wordmark, `translateY(${(((1 - clamp(spring(t, K.end + 0.5, 0.5, 0.86), 0, 1.02)) + clear) * 105).toFixed(2)}%)`);
+  setT($.wordmark, TRAVEL((1 - clamp(spring(t, K.end + 0.5, 0.5, 0.86), 0, 1.02)) + clear));
   headlineAt("tag", t, B(39), K.out);
   const cta = clamp(spring(t, B(41), 0.42, 0.74), 0, 1.08) * (1 - clear);
   setT($.cta, `scale(${cta.toFixed(4)})`);

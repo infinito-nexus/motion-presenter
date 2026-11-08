@@ -38,6 +38,6 @@ html, body {
 .abs { position: absolute; }
 .row { display: flex; align-items: center; }
 .center { display: flex; align-items: center; justify-content: center; }
-.mask { overflow: hidden; }
+.mask { clip-path: inset(-.4em 0); }
 .t { display: inline-block; white-space: nowrap; line-height: 1.3; vertical-align: top; }
 i { display: block; font-style: normal; }
