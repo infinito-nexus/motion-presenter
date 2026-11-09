@@ -1,21 +1,21 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "motion-designer",
+  "name": "motion-presenter",
   "owner": {
-    "name": "kaventro",
-    "email": "301901286+kaventro@users.noreply.github.com"
+    "name": "infinito-nexus"
   },
   "metadata": {
-    "description": "A motion designer for Claude Code: launch films of your app."
+    "description": "Films from code: launch films with motion-designer, narrated presentation series with motion-presenter."
   },
   "plugins": [
     {
-      "name": "motion-designer",
+      "name": "motion-presenter",
       "source": "./",
-      "description": "App launch films with the real UI in an iPhone or a laptop window, cut to music on the beat, styled, voiced, checked frame by frame and rendered.",
+      "description": "Two skills: motion-designer (short films from code, cut to the beat, voiced, checked frame by frame and rendered) and motion-presenter (narrated multi-chapter presentation series on top of it).",
       "version": "1.2.0",
       "category": "design",
-      "keywords": ["video", "motion-designer", "launch-film", "motion-design", "music", "voiceover"]
+      "skills": ["./skills/motion-designer", "./skills/motion-presenter"],
+      "keywords": ["video", "motion-designer", "motion-presenter", "presentation", "motion-design", "voiceover"]
     }
   ]
 }

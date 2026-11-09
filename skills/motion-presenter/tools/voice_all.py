@@ -16,8 +16,8 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-ENGINE = HERE.parent / "engine" / "scripts"
-CACHE = Path(os.environ.get("PRESENTAITOR_CACHE", "/tmp/presentaitor-cache"))
+ENGINE = HERE.parent.parent / "motion-designer" / "scripts"
+CACHE = Path(os.environ.get("MOTION_PRESENTER_CACHE", "/tmp/motion-presenter-cache"))
 LOCAL_HF = Path.home() / ".cache" / "huggingface"
 DEFAULT_HF = LOCAL_HF if (LOCAL_HF / "hub" / "models--ResembleAI--chatterbox").exists() else CACHE / "hf"
 ENV = {

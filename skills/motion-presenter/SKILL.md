@@ -1,14 +1,14 @@
 ---
-name: presentaitor
-description: Make narrated presentation films and multi-chapter demo series of any product, project or release, in the user's own brand or a ready preset, from code, existing screen recordings, or both, with a narrator voice and a music track. Use when the user wants a demo video, a feature walkthrough series, a release presentation, or a video that presents work in their place, or wants to change the text, voice, music, look or scenes of such a film.
+name: motion-presenter
+description: Make narrated presentation films and multi-chapter demo series of any product, project or release, in the user's own theme or the neutral default, from code, existing screen recordings, or both, with a narrator voice and a music track. Use when the user wants a demo video, a feature walkthrough series, a release presentation, or a video that presents work in their place, or wants to change the text, voice, music, look or scenes of such a film.
 author: Alejandro Roman
 ---
 
-# presentaitor
+# motion-presenter
 
-Films that present the work so nobody has to stand in front of a camera: one narrator, one look, one track, chapter after chapter. The film engine is `engine/` (motion-designer by kaventro, MIT, see `engine/LICENSE`); this skill adds the setup interview, presets, a scene library and the workflow for a series.
+Films that present the work so nobody has to stand in front of a camera: one narrator, one look, one track, chapter after chapter. The film engine is the sibling skill `../motion-designer` (motion-designer by kaventro, MIT); this skill adds the setup interview, the theme and scene data inputs, a scene library and the workflow for a series. It carries no brand and no project data: both come in as inputs.
 
-`SKILL_DIR` for every engine command is `<this folder>/engine`. Read `engine/ENGINE.md` once at the start and follow it; where this file and ENGINE.md differ, this file wins.
+`SKILL_DIR` for every engine command is `<this folder>/../motion-designer`. Read `../motion-designer/SKILL.md` once at the start and follow it; where this file and that one differ, this file wins.
 
 A change to a film that already exists (text, voice, music, look): read `reference/changes.md` and take the cheapest path there; skip the interview.
 
@@ -18,24 +18,24 @@ Every new film or series starts by asking the user, one round of questions at a 
 
 | Topic | Ask | Default |
 |---|---|---|
-| Brand | preset or custom? Custom: canvas, accent and text colours (hex), logo file, two fonts (display + mono), dark or light | preset `infinito` (below) |
+| Theme | the neutral default theme, or the user's: canvas, accent and text colours (hex), logo file, two fonts (display + mono), dark or light | the neutral theme in `defaults/theme/` (below) |
 | Voice | the default narrator, or the user's own 10-20 s sample? A real person's voice needs that person's consent for this use; a voice generated on a third-party service needs terms that allow cloning it | Bella |
-| Music | the default track, the user's track, or search free sources (`engine/reference/music-sources.md`, user approves the download)? | pulse (original, ACE-Step 1.5) |
+| Music | the default track, the user's track, or search free sources (`../motion-designer/reference/music-sources.md`, user approves the download)? | pulse (original, ACE-Step 1.5) |
 | Series | chapters (one idea each), length per chapter, intro and end card, language | intro + chapters of 60-90 s + end card with the music credit |
 | Output | split chapter videos, one long video with chapter markers, or both? Write it as `Output: split`, `Output: long` or `Output: both` in `SERIES.md`; re-renders read it and never ask again | both |
 | Captions | kinetic captions on or off (one toggle, `"captions"` in `voiceover.json`) | on for a series with a long video and for phone films, off elsewhere |
-| People and data | the names on screen, invented data, what must never show (credentials, real customer data) | invented names, passwords only as dots |
+| People and data | the product, version, names, mailboxes and titles on screen (they go into `scenes.json`), invented data, what must never show (credentials, real customer data) | the neutral example data in `defaults/scenes/scenes.json`, passwords only as dots |
 | Story rules | continuity rule for logins, honesty notes (what the footage does not prove), names in narration or neutral | the continuity rule below |
 | Scenes | per chapter, propose 3-5 scenes from `reference/scenes.md` and let the user swap them | the agent's proposal |
 
-### Presets
+### Theme and scene data
 
-| | `infinito` |
-|---|---|
-| Look | dark techy canvas `#0A0D1A`, accent `#142CAD`, bright accent `#4F6BFF`, text `#EFEFEF`; Inter 500/800 + JetBrains Mono 600; mono uppercase kickers; `scanLayer(0.06)`, `grainLayer(0.08)`, vignette 0.5 on motion and 0.2 over light footage |
-| Files | `defaults/brand/film.css` (copy over the film's `src/film.css`), `defaults/brand/logo.png`, `defaults/brand/example-intro-scenes.js` |
+| Input | Default | Contract |
+|---|---|---|
+| Theme | `defaults/theme/film.css` (copy over the film's `src/film.css`, then replace the `:root` tokens) and the logo `defaults/theme/logo.svg` | `reference/theme.md` |
+| Scene data | `defaults/scenes/scenes.json` (copy next to `SERIES.md`, or into one film, and fill it) | `reference/scenes.md` |
 
-A custom brand starts from `defaults/brand/film.css`: replace the `:root` tokens with the user's colours and fonts, keep the class names. Pack fonts and logo into each film with the engine's `assets.py --font "<Family>:<weight>=<file>" --img logo=<file>`.
+Pack fonts and the logo into each film with the engine's `assets.py --font "<Family>:<weight>=<file>" --img logo=<file>`. `film.py` writes the nearest `scenes.json` (the film's, else the series') to `src/scene-data.js` as `SCENE_DATA` before every render and loads it before `scenes.js`; the scene library reads every name, title and version from there.
 
 ### Defaults
 
@@ -58,7 +58,7 @@ A custom brand starts from `defaults/brand/film.css`: replace the `:root` tokens
 
 ## 3. Motion presets
 
-Scenes animate with the presets in `engine/templates/shared/presets.js`; every one is a pure function of t (never a CSS transition). Pass an object to override any default, or `tune(name, {...})` once to change it for the whole film. Defaults live in `preset-defaults.js`.
+Scenes animate with the presets in `../motion-designer/templates/shared/presets.js`; every one is a pure function of t (never a CSS transition). Pass an object to override any default, or `tune(name, {...})` once to change it for the whole film. Defaults live in `preset-defaults.js`.
 
 | Preset | Call | What it does |
 |---|---|---|
@@ -77,10 +77,11 @@ Scenes animate with the presets in `engine/templates/shared/presets.js`; every o
 | motionBlur | `motionBlur(host, t, (el, u) => place(el, u))` | sub-frame copies of a moving element; off in previews |
 | rackFocus | `rackFocus([back, mid, front], t, t0, 2, 0)` | blur per depth layer, focus shifts |
 
-`python3 <SKILL>/tools/film.py playground` builds one test page per preset (scrubber, play, sliders, state, "Export defaults"); `--check` loads them all headless. A new technique enters the library only after its playground page has been tuned and approved: add its function to `presets.js`, its defaults to `preset-defaults.js` and its page to `engine/playground/demos.js`; `film.py playground --apply <name>-defaults.json` writes exported slider values back.
+`python3 <SKILL>/tools/film.py playground` builds one test page per preset (scrubber, play, sliders, state, "Export defaults"); `--check` loads them all headless. A new technique enters the library only after its playground page has been tuned and approved: add its function to `presets.js`, its defaults to `preset-defaults.js` and its page to `../motion-designer/playground/demos.js`; `film.py playground --apply <name>-defaults.json` writes exported slider values back.
 
 ## Rules
 
 - Real features, invented data. Narration claims only what the footage or the repo shows; anything else is listed for the user.
 - Passwords stay dots on screen; never open env or spec files holding credentials.
-- The music credit and the engine's MIT notice stay in place.
+- No brand and no project data inside this skill: themes, logos and scene data stay in the user's work folder.
+- The music credit and the MIT notice (the repository's `LICENSE` and `NOTICE`) stay in place.

@@ -1,0 +1,22 @@
+{
+  "product": "Acme",
+  "version": "2.0",
+  "domain": "example.test",
+  "component": "Acme Mail",
+  "previous": "Legacy Mail",
+  "switch": "import_legacy",
+  "terminal": "acme · deploy",
+  "people": [
+    { "name": "Maria Example", "mailbox": "maria@example.test" },
+    { "name": "Alex Example", "mailbox": "alex@example.test" }
+  ],
+  "mailboxes": ["alex@example.test", "maria@example.test", "info@example.test"],
+  "chapters": ["Deploy", "Mail", "Filters", "Admin", "Calendars", "Network"],
+  "next": "09 · Moving from Legacy Mail",
+  "onion": {
+    "address": "exampleexampleexampleexampleexampleexampleexampleexample.onion",
+    "left": "x7k2m9…q4vd.onion",
+    "right": "pz3r8t…n6wd.onion"
+  },
+  "credit": "Music: original, made with ACE-Step 1.5"
+}

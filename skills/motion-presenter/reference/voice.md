@@ -4,14 +4,14 @@ Read before the first `tools/film.py` run.
 
 ## Setup
 
-- Chatterbox must be installed once: `bash <SKILL>/engine/scripts/install.sh chatterbox` (about 4 GB). Kokoro is the light fallback, but its delivery is flat; use it only for timing drafts.
-- In the sandbox the venv and `~/.cache` are read-only. `film.py` sets `NUMBA_CACHE_DIR` and `HF_HOME` under `/tmp/presentaitor-cache`; the first run downloads the weights (about 3 GB) there, and they vanish on reboot. To keep them: `cp -r /tmp/presentaitor-cache/hf/hub/* ~/.cache/huggingface/hub/` outside the sandbox, then run with `HF_HOME=~/.cache/huggingface`.
+- Chatterbox must be installed once: `bash <SKILL>/../motion-designer/scripts/install.sh chatterbox` (about 4 GB). Kokoro is the light fallback, but its delivery is flat; use it only for timing drafts.
+- In the sandbox the venv and `~/.cache` are read-only. `film.py` sets `NUMBA_CACHE_DIR` and `HF_HOME` under `/tmp/motion-presenter-cache` (`MOTION_PRESENTER_CACHE`); the first run downloads the weights (about 3 GB) there, and they vanish on reboot. To keep them: `cp -r /tmp/motion-presenter-cache/hf/hub/* ~/.cache/huggingface/hub/` outside the sandbox, then run with `HF_HOME=~/.cache/huggingface`.
 
 ## Running
 
 - One voice job at a time. Each Chatterbox process takes every core; eight in parallel ran about 100x slower than one.
 - About 40 s per line (three takes, the most natural kept): a 9-chapter series of about 110 lines takes about 75 minutes. Takes are cached in `<film>/out/voiceover/<backend>/`, each with a `.key` of its text and voice settings; a rerun logs `cache hit` or `cache miss` per line and only speaks the misses.
-- `film.py` runs `engine/scripts/voiceover.py`, which speaks, trims, lays out `timing.json` and mixes in one pass.
+- `film.py` runs `../motion-designer/scripts/voiceover.py`, which speaks, trims, lays out `timing.json` and mixes in one pass.
 
 ## Timing (voice first)
 
@@ -24,8 +24,8 @@ Read before the first `tools/film.py` run.
 
 ## Narration
 
-- A narrator voice is not the person on screen: write third person ("Alejandro signs in") unless the user wants first person.
-- Spell what the model misreads: "infinito dot test", "fifteen point oh", "elliptic curve" instead of "Ed25519"; keep the exact names in the on-screen callouts.
+- A narrator voice is not the person on screen: write third person ("Maria signs in") unless the user wants first person.
+- Spell what the model misreads: "example dot test", "two point oh", "elliptic curve" instead of "Ed25519"; keep the exact names in the on-screen callouts.
 - Say the viewer's domain ("mail dot your domain"), never the lab domain, when telling viewers what to type.
 
 ## Playback

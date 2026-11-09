@@ -9,8 +9,8 @@ const OPEN = F(2029);
 const RECAP = B(145);
 const NEXT = B(155);
 const END = FILM.DURATION;
-const ADDR = "4dl6yijmuksgh5bfaf3csqoelji7zptyuo6wy5g5prjpnk6vdbzfwnad.onion";
-const SHORT = "…@4dl6yijm…zfwnad.onion";
+const ADDR = SCENE_DATA.onion.address;
+const SHORT = `…@${ADDR.slice(0, 8)}…${ADDR.slice(-12)}`;
 const SHOTS = [];
 
 const PS = 896 / 1920;
@@ -72,7 +72,7 @@ function build(stage) {
     <div class="full" data-k="world">
       <div class="full" data-k="sF"></div>
 
-      ${PLATES.map((p) => `<div data-k="${p.k}" class="abs center" style="left:${p.x}px;top:${p.y}px;width:${p.w}px;height:${p.h}px;background:rgba(10,13,26,0.97);border-radius:${p.fs > 20 ? 6 : 3}px"><div class="t mono" style="font-size:${p.fs}px;color:var(--ink)">${p.name}</div></div>`).join("")}
+      ${PLATES.map((p) => `<div data-k="${p.k}" class="abs center" style="left:${p.x}px;top:${p.y}px;width:${p.w}px;height:${p.h}px;background:color-mix(in srgb, var(--bg) 97%, transparent);border-radius:${p.fs > 20 ? 6 : 3}px"><div class="t mono" style="font-size:${p.fs}px;color:var(--ink)">${p.name}</div></div>`).join("")}
 
       <div data-k="split" class="full">
         <div class="abs panel" style="left:${PANEL_L.x - 2}px;top:${PANEL_L.y - 2}px;width:900px;height:508px"></div>
@@ -93,7 +93,7 @@ function build(stage) {
           <div class="t" style="font-size:34px;font-weight:800;margin-top:4px">${p.text}</div>
         </div>`).join("")}
 
-      <div data-k="demo" class="abs center" style="left:1772px;top:7px;width:124px;height:32px;border-radius:16px;border:2px solid var(--accent2);background:rgba(10,13,26,0.9)"><div class="t mono" style="font-size:18px;letter-spacing:0.16em;color:var(--ink)">DEMO</div></div>
+      <div data-k="demo" class="abs center" style="left:1772px;top:7px;width:124px;height:32px;border-radius:16px;border:2px solid var(--accent2);background:color-mix(in srgb, var(--bg) 90%, transparent)"><div class="t mono" style="font-size:18px;letter-spacing:0.16em;color:var(--ink)">DEMO</div></div>
 
       <div class="shot center" data-k="s1" style="flex-direction:column">
         <div data-k="onion1" style="margin-bottom:30px">${onion(150, 3.6)}</div>
@@ -116,15 +116,15 @@ function build(stage) {
 
       <div class="shot" data-k="s3">
         ${kick("k3", "ONION TO ONION", 0, 150, 1920, "center")}
-        <div data-k="cloud" class="abs" style="left:590px;top:330px;width:740px;height:420px;border:3px dashed rgba(79,107,255,0.45);border-radius:210px;background:rgba(20,44,173,0.12)"></div>
+        <div data-k="cloud" class="abs" style="left:590px;top:330px;width:740px;height:420px;border:3px dashed color-mix(in srgb, var(--accent2) 45%, transparent);border-radius:210px;background:color-mix(in srgb, var(--accent) 12%, transparent)"></div>
         <div class="abs mask" style="left:590px;top:762px;width:740px;height:44px;text-align:center"><div data-k="cloudK" class="t kicker" style="font-size:24px;color:var(--ink2)">TOR NETWORK</div></div>
         <svg class="abs" style="left:0;top:0;overflow:visible" width="1920" height="1080" viewBox="0 0 1920 1080" fill="none">
           <path data-k="route" d="${PATH.map(([x, y], i) => `${i ? "L" : "M"}${x} ${y}`).join(" ")}" stroke="var(--accent2)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 14"/>
           <path data-k="routeDraw" d="${PATH.map(([x, y], i) => `${i ? "L" : "M"}${x} ${y}`).join(" ")}" stroke="var(--accent2)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
         </svg>
         ${[1, 2, 3].map((i) => `<div data-k="hop${i}" class="abs hop center" style="left:${PATH[i][0] - 46}px;top:${PATH[i][1] - 46}px"><div class="t mono" style="font-size:30px">${i}</div></div>`).join("")}
-        <div data-k="nodeL" class="abs node" style="left:120px;top:390px;width:380px;height:260px">${onion(110)}<div class="t mono" style="font-size:28px">x7k2m9…q4vd.onion</div></div>
-        <div data-k="nodeR" class="abs node" style="left:1420px;top:390px;width:380px;height:260px">${onion(110)}<div class="t mono" style="font-size:28px">pz3r8t…n6wd.onion</div></div>
+        <div data-k="nodeL" class="abs node" style="left:120px;top:390px;width:380px;height:260px">${onion(110)}<div class="t mono" style="font-size:28px">${SCENE_DATA.onion.left}</div></div>
+        <div data-k="nodeR" class="abs node" style="left:1420px;top:390px;width:380px;height:260px">${onion(110)}<div class="t mono" style="font-size:28px">${SCENE_DATA.onion.right}</div></div>
         <svg data-k="env" class="abs" style="left:-48px;top:-34px;overflow:visible" width="96" height="68" viewBox="0 0 100 70" fill="none" stroke="var(--ink)" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">${ENVELOPE}</svg>
         <div class="abs center" style="left:0;top:850px;width:1920px;height:96px"><div class="mask" style="height:96px"><div data-k="cap3" class="t" style="font-size:66px;font-weight:800;letter-spacing:-0.03em">Onion to onion, <span style="color:var(--accent2)">inside Tor</span></div></div></div>
       </div>
@@ -138,7 +138,7 @@ function build(stage) {
           </div>`).join("")}
         <div data-k="nextBox" class="full center" style="flex-direction:column;gap:26px">
           <div class="mask" style="height:44px"><div data-k="nextK" class="t kicker">NEXT</div></div>
-          <div class="mask" style="height:136px"><div data-k="nextT" class="t" style="font-size:104px;font-weight:800;letter-spacing:-0.04em">09 · Moving from Mailu</div></div>
+          <div class="mask" style="height:136px"><div data-k="nextT" class="t" style="font-size:104px;font-weight:800;letter-spacing:-0.04em">${SCENE_DATA.next}</div></div>
           <img data-k="logo" src="${ASSETS.img.logo}" style="width:120px;height:120px;border-radius:50%;margin-top:30px">
         </div>
       </div>
@@ -239,7 +239,7 @@ function apply(t) {
   $.card.style.opacity = clamp(cardIn * 1.5).toFixed(3);
   setT($.card, `translateY(${(30 * (1 - cardIn)).toFixed(1)}px)`);
   const flash = pulse(t, B(33), 0.6);
-  $.card.style.boxShadow = `0 0 ${(60 * flash).toFixed(1)}px rgba(79,107,255,${(0.7 * flash).toFixed(3)})`;
+  $.card.style.boxShadow = `0 0 ${(60 * flash).toFixed(1)}px color-mix(in srgb, var(--accent2) ${(70 * flash).toFixed(1)}%, transparent)`;
   rise($.count, prog(t, typeAt + 2.0, 0.5, E.out));
   TAGS.forEach((g) => {
     const p = spring(t, g.at, 0.36, 0.75);
@@ -256,7 +256,7 @@ function apply(t) {
   const arrive = pulse(t, LEGS[4], 0.9);
   $.nodeR.style.opacity = clamp(nr * 1.5).toFixed(3);
   setT($.nodeR, `translateY(${(40 * (1 - nr)).toFixed(1)}px) scale(${(1 + 0.05 * arrive).toFixed(4)})`);
-  $.nodeR.style.boxShadow = `0 0 ${(70 * arrive).toFixed(1)}px rgba(79,107,255,${(0.8 * arrive).toFixed(3)})`;
+  $.nodeR.style.boxShadow = `0 0 ${(70 * arrive).toFixed(1)}px color-mix(in srgb, var(--accent2) ${(80 * arrive).toFixed(1)}%, transparent)`;
   $.cloud.style.opacity = prog(t, B(39), 0.6, E.out).toFixed(3);
   rise($.cloudK, prog(t, B(39) + 0.2, 0.5, E.out));
   drawPath($.routeDraw, prog(t, B(40), 0.9, E.inOut));
@@ -269,7 +269,7 @@ function apply(t) {
     const g = 18 + 14 * idle + 50 * pass;
     h.style.opacity = clamp(p * 1.6).toFixed(3);
     setT(h, `scale(${(0.5 + 0.5 * p + 0.16 * pass).toFixed(4)})`);
-    h.style.boxShadow = `0 0 ${g.toFixed(1)}px ${(g / 3).toFixed(1)}px rgba(79,107,255,${(0.45 + 0.4 * pass).toFixed(3)})`;
+    h.style.boxShadow = `0 0 ${g.toFixed(1)}px ${(g / 3).toFixed(1)}px color-mix(in srgb, var(--accent2) ${(45 + 40 * pass).toFixed(1)}%, transparent)`;
   });
   const [ex, ey] = envAt(t);
   const envIn = prog(t, LEGS[0] - 0.4, 0.4, E.out);

@@ -135,7 +135,7 @@ class Skills(unittest.TestCase):
 
     def test_every_skill_has_a_name_and_a_description_within_limits(self):
         skills = sorted((ROOT / "skills").glob("*/SKILL.md"))
-        self.assertEqual([p.parent.name for p in skills], ["motion-designer"])
+        self.assertEqual([p.parent.name for p in skills], ["motion-designer", "motion-presenter"])
         for path in skills:
             meta, body = self.frontmatter(path)
             self.assertEqual(meta["name"], path.parent.name)

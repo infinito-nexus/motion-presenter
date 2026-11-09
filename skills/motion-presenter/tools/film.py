@@ -1,4 +1,4 @@
-"""presentaitor film commands: voice-first render, preview, one chapter of a series, playground, join.
+"""motion-presenter film commands: voice-first render, preview, one chapter of a series, playground, join.
 
 Usage:
     film.py render <film> [--final]            voice, timing, footage, picture by scene, mix, silence check
@@ -8,7 +8,8 @@ Usage:
     film.py playground [preset] [--check] [--apply defaults.json]
                                                one test page per motion preset
 
-A film folder holds voiceover.json (with "scenes"), src/index.html and audio/.
+A film folder holds voiceover.json (with "scenes"), src/index.html and audio/, and optionally
+scenes.json (or one next to SERIES.md): the scene data, written to src/scene-data.js as SCENE_DATA.
 Picture segments are cached per scene in out/segments/<profile>/: a scene renders again only
 when its timing, its footage windows, the page code or the profile changed.
 """
@@ -23,8 +24,8 @@ import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-ENGINE = HERE.parent / "engine" / "scripts"
-CACHE = Path(os.environ.get("PRESENTAITOR_CACHE", "/tmp/presentaitor-cache"))
+ENGINE = HERE.parent.parent / "motion-designer" / "scripts"
+CACHE = Path(os.environ.get("MOTION_PRESENTER_CACHE", "/tmp/motion-presenter-cache"))
 LOCAL_HF = Path.home() / ".cache" / "huggingface"
 ENV = {
     **os.environ,
@@ -82,6 +83,20 @@ def captions_default(film):
     phone = device.exists() and "devBody" in device.read_text()
     series = (film.parent / "SERIES.md").exists() and output_format(film.parent) in ("long", "both")
     return phone or series
+
+
+def scene_data(film):
+    """Args: a film folder. Output: the scenes.json of the film or its series, written to src/scene-data.js and loaded before scenes.js; None without one."""
+    data = next((p for p in (film / "scenes.json", film.parent / "scenes.json") if p.exists()), None)
+    if data is None:
+        return None
+    src = film / "src"
+    (src / "scene-data.js").write_text("window.SCENE_DATA = " + json.dumps(json.loads(data.read_text())) + ";\n")
+    page = src / "index.html"
+    html = page.read_text()
+    if "scene-data.js" not in html:
+        page.write_text(html.replace('<script src="scenes.js"></script>', '<script src="scene-data.js"></script>\n<script src="scenes.js"></script>', 1))
+    return data
 
 
 def voice(film):
@@ -151,6 +166,7 @@ def render(film, profile, blur=1):
     """Render a film with a profile. Output: (video path, seconds spent on the picture, silence findings, ok)."""
     film = Path(film).resolve()
     prof = PROFILES[profile]
+    scene_data(film)
     spec, plan = voice(film)
     under = cut_footage(film, spec, plan)
     cam = None

@@ -1,7 +1,9 @@
 film({ W: 1920, H: 1080, BPM: 110.0, BEATS: 112 });
 
 const SHOTS = [];
-const BOXES = ["alejandro@infinito.test", "maria@infinito.test", "info@infinito.test"];
+const BOXES = SCENE_DATA.mailboxes.slice(0, 3);
+const TITLE = `${SCENE_DATA.product} ${SCENE_DATA.version}`;
+const CHAPTER = `09 · MOVING FROM ${SCENE_DATA.previous.toUpperCase()}`;
 const CARD_T = [B(21), B(24), B(27)];
 const CARD_DUR = 1.9;
 const ICON_FOLDER = '<path d="M8 28 V80 H92 V36 H48 L40 26 H8 Z"/>';
@@ -29,7 +31,7 @@ const box = (k, name, x, accent) => `
   <div data-k="${k}" class="abs" style="left:${x}px;top:330px;width:500px;height:440px;border:3px solid ${accent ? "var(--accent2)" : "var(--ink3)"};border-radius:24px;background:var(--bg2)">
     <div class="abs t" style="left:36px;top:26px;font-size:54px;font-weight:800;color:${accent ? "var(--ink)" : "var(--ink2)"}">${name}</div>
     ${BOXES.map((b, i) => `
-      <div data-k="${k}Row${i}" class="abs row" style="left:30px;top:${126 + i * 92}px;width:440px;height:76px;border-radius:12px;border:2px solid var(--hair);background:${accent ? "rgba(79,107,255,0.10)" : "rgba(239,239,239,0.04)"};padding-left:20px;gap:16px">
+      <div data-k="${k}Row${i}" class="abs row" style="left:30px;top:${126 + i * 92}px;width:440px;height:76px;border-radius:12px;border:2px solid var(--hair);background:${accent ? "color-mix(in srgb, var(--accent2) 10%, transparent)" : "color-mix(in srgb, var(--ink) 4%, transparent)"};padding-left:20px;gap:16px">
         ${svgIcon(ICON_MAIL, 34, accent ? "var(--accent2)" : "var(--ink2)")}
         <div class="t mono" style="font-size:23px;color:var(--ink)">${b}</div>
       </div>`).join("")}
@@ -39,23 +41,23 @@ function build(stage) {
   stage.innerHTML = `
     <div class="full" data-k="world">
       <div class="shot" data-k="s1">
-        ${kicker("k1", "09 · MOVING FROM MAILU", 260, 380, 1400)}
-        <div class="abs mask" style="left:260px;top:440px;width:1500px;height:160px"><div data-k="t1a" class="t h1">On Mailu today?</div></div>
+        ${kicker("k1", CHAPTER, 260, 380, 1400)}
+        <div class="abs mask" style="left:260px;top:440px;width:1500px;height:160px"><div data-k="t1a" class="t h1">On ${SCENE_DATA.previous} today?</div></div>
         <div class="abs mask" style="left:260px;top:620px;width:1500px;height:80px"><div data-k="t1b" class="t" style="font-size:64px;font-weight:500;color:var(--ink2)">There's a built-in import<span style="color:var(--accent2)">.</span></div></div>
       </div>
 
       <div class="shot" data-k="s2">
-        ${kicker("k2", "09 · MOVING FROM MAILU", 200, 100, 1000)}
-        ${box("mailu", "Mailu", 200, false)}
-        ${box("stal", "Stalwart", 1220, true)}
+        ${kicker("k2", CHAPTER, 200, 100, 1000)}
+        ${box("src", SCENE_DATA.previous, 200, false)}
+        ${box("dst", SCENE_DATA.component, 1220, true)}
         <div data-k="sw" class="abs" style="left:760px;top:640px;width:400px;height:110px">
-          <div class="abs center" style="left:0;top:0;width:400px;height:40px"><div data-k="swLabel" class="t mono" style="font-size:24px;color:var(--ink2)">import_mailu: false</div></div>
+          <div class="abs center" style="left:0;top:0;width:400px;height:40px"><div data-k="swLabel" class="t mono" style="font-size:24px;color:var(--ink2)">${SCENE_DATA.switch}: false</div></div>
           <div data-k="swTrack" class="abs" style="left:150px;top:52px;width:100px;height:52px;border-radius:26px;background:var(--ink3)">
             <div data-k="swKnob" class="abs" style="left:6px;top:6px;width:40px;height:40px;border-radius:50%;background:var(--ink)"></div>
           </div>
         </div>
         ${BOXES.map((b, i) => `
-          <div data-k="card${i}" class="abs row" style="left:0;top:0;width:420px;height:84px;border-radius:16px;border:2px solid var(--accent2);background:#141B3D;padding:0 18px;gap:14px;opacity:0">
+          <div data-k="card${i}" class="abs row" style="left:0;top:0;width:420px;height:84px;border-radius:16px;border:2px solid var(--accent2);background:color-mix(in srgb, var(--accent) 25%, var(--bg2));padding:0 18px;gap:14px;opacity:0">
             ${svgIcon(ICON_MAIL, 36, "var(--ink)")}
             <div class="t mono" style="font-size:21px;color:var(--ink);flex:1">${b.split("@")[0]}</div>
             ${svgIcon(ICON_FOLDER, 30, "var(--accent2)", 8)}${svgIcon(ICON_FLAG, 30, "var(--accent2)", 8)}${svgIcon(ICON_DATE, 30, "var(--accent2)", 8)}
@@ -77,7 +79,7 @@ function build(stage) {
 
       <div class="shot center" data-k="s3">
         <div data-k="warn" class="abs" style="left:410px;top:230px;width:1100px;height:620px;border:3px solid #F5B83D;border-radius:28px;background:var(--bg2)">
-          ${kicker("k3", "15.0 IS A MAJOR RELEASE", 70, 60, 900)}
+          ${kicker("k3", `${SCENE_DATA.version} IS A MAJOR RELEASE`, 70, 60, 900)}
           <svg data-k="tri" class="abs" style="left:70px;top:130px" width="120" height="110" viewBox="0 0 100 92" fill="none" stroke="#F5B83D" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"><path d="M50 6 L94 86 H6 Z"/><path d="M50 34 V58 M50 70 V72"/></svg>
           <div class="abs mask" style="left:220px;top:130px;width:840px;height:102px"><div data-k="bu" class="t" style="font-size:84px;font-weight:800;letter-spacing:-0.03em">Before You Upgrade</div></div>
           <div class="abs mask" style="left:72px;top:280px;width:980px;height:47px"><div data-k="bu2" class="t" style="font-size:38px;font-weight:500;color:var(--ink2)">Read this section of the release article first.</div></div>
@@ -99,9 +101,9 @@ function build(stage) {
 
       <div class="shot center" data-k="s5" style="flex-direction:column;gap:30px">
         <img data-k="logo" src="${ASSETS.img.logo}" style="width:240px;height:240px;border-radius:50%">
-        <div data-k="title" class="t mono" style="font-size:60px">Infinito.Nexus 15.0</div>
+        <div data-k="title" class="t mono" style="font-size:60px">${TITLE}</div>
         <div data-k="thanks" class="t" style="font-size:44px;font-weight:500;color:var(--ink2)">Thanks for watching.</div>
-        <div data-k="credit" class="abs center" style="left:0;top:980px;width:1920px;height:40px"><div class="t" style="font-size:22px;color:var(--ink3)">Music: “Industrial Cinematic” by Kevin MacLeod (incompetech.com), CC BY 4.0</div></div>
+        <div data-k="credit" class="abs center" style="left:0;top:980px;width:1920px;height:40px"><div class="t" style="font-size:22px;color:var(--ink3)">${SCENE_DATA.credit}</div></div>
       </div>
     </div>
     ${scanLayer(0.06)}
@@ -128,18 +130,18 @@ function apply(t) {
 
   rise($.k2, prog(t, B(9) + 0.3, 0.5, E.out));
   const mIn = spring(t, B(10), 0.4, 0.8);
-  $.mailu.style.opacity = clamp(mIn * 1.5).toFixed(3);
-  setT($.mailu, `translateY(${(60 * (1 - mIn)).toFixed(1)}px)`);
+  $.src.style.opacity = clamp(mIn * 1.5).toFixed(3);
+  setT($.src, `translateY(${(60 * (1 - mIn)).toFixed(1)}px)`);
   const sIn = spring(t, B(13), 0.4, 0.8);
-  $.stal.style.opacity = clamp(sIn * 1.5).toFixed(3);
-  setT($.stal, `translateY(${(60 * (1 - sIn)).toFixed(1)}px)`);
+  $.dst.style.opacity = clamp(sIn * 1.5).toFixed(3);
+  setT($.dst, `translateY(${(60 * (1 - sIn)).toFixed(1)}px)`);
 
   const swIn = prog(t, B(16), 0.4, E.out);
   $.sw.style.opacity = swIn.toFixed(3);
   const flip = spring(t, B(18), 0.25, 0.7);
   setT($.swKnob, `translateX(${(48 * flip).toFixed(1)}px)`);
   $.swTrack.style.background = flip > 0.5 ? "var(--accent2)" : "var(--ink3)";
-  $.swLabel.textContent = flip > 0.5 ? "import_mailu: true" : "import_mailu: false";
+  $.swLabel.textContent = `${SCENE_DATA.switch}: ${flip > 0.5}`;
   $.swLabel.style.color = flip > 0.5 ? "var(--ink)" : "var(--ink2)";
 
   BOXES.forEach((_, i) => {
@@ -152,9 +154,9 @@ function apply(t) {
     const c = $["card" + i];
     c.style.opacity = vis.toFixed(3);
     setT(c, `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`);
-    $["mailuRow" + i].style.opacity = (1 - 0.65 * clamp(p * 4)).toFixed(3);
+    $["srcRow" + i].style.opacity = (1 - 0.65 * clamp(p * 4)).toFixed(3);
     const land = clamp((p - 0.85) / 0.15);
-    $["stalRow" + i].style.opacity = (0.15 + 0.85 * land).toFixed(3);
+    $["dstRow" + i].style.opacity = (0.15 + 0.85 * land).toFixed(3);
   });
 
   FEATURES.forEach((f) => {

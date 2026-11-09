@@ -22,6 +22,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 SKILL = HERE.parent
+ENGINE = SKILL.parent / "motion-designer"
 TITLE_SECONDS = 2.5
 XFADE = 1.0
 
@@ -71,7 +72,7 @@ def title_card(series, film, n, size, work):
     if card.exists():
         shutil.rmtree(card)
     (card / "src").mkdir(parents=True)
-    for f in (SKILL / "engine" / "templates" / "shared").iterdir():
+    for f in (ENGINE / "templates" / "shared").iterdir():
         shutil.copy(f, card / "src" / f.name)
     for f in ("film.css", "assets.js"):
         shutil.copy(film / "src" / f, card / "src" / f)
@@ -80,7 +81,7 @@ def title_card(series, film, n, size, work):
     (card / "src" / "timing.js").write_text("window.TIMING = null;\n" + "window.TITLE_CARD = " + json.dumps(
         {"n": n, "title": title_of(film), "W": size[0], "H": size[1], "seconds": TITLE_SECONDS}) + ";\n")
     out = card / "card.mp4"
-    subprocess.run(["node", str(SKILL / "engine" / "scripts" / "render.mjs"), "video", str(card / "src" / "index.html"), str(out), "--crf", "18", "--fps", "30"], check=True)
+    subprocess.run(["node", str(ENGINE / "scripts" / "render.mjs"), "video", str(card / "src" / "index.html"), str(out), "--crf", "18", "--fps", "30"], check=True)
     return out
 
 

@@ -4,12 +4,12 @@ const SHOTS = [];
 const ROWS = 22;
 const ROW_H = 34;
 const CLEAN = (s) => s.replace(/[\p{Extended_Pictographic}️‍]/gu, "").replace(/\s{2,}/g, " ");
-const LINES = DEPLOY_LINES.map(CLEAN);
+const LINES = (SCENE_DATA.log || Array.from({ length: 140 }, (_, i) => `TASK [step ${i + 1}] ok`)).map(CLEAN);
 const STOPS = [
   { line: 55, beat: 13, step: "TLS", title: "Certificates", sub: "TLS for every domain" },
   { line: 79, beat: 20, step: "DATABASE", title: "Own schema", sub: "in the shared Postgres" },
-  { line: 90, beat: 28, step: "DOMAIN", title: "Mail domain", sub: "created through Stalwart's JMAP API" },
-  { line: 100, beat: 37, step: "ACCOUNTS", title: "Mailboxes", sub: "alejandro · maria · helpdesk" },
+  { line: 90, beat: 28, step: "DOMAIN", title: "Mail domain", sub: `created through the ${SCENE_DATA.component} API` },
+  { line: 100, beat: 37, step: "ACCOUNTS", title: "Mailboxes", sub: SCENE_DATA.mailboxes.map((m) => m.split("@")[0]).join(" · ") },
   { line: 106, beat: 45, step: "SSO", title: "Single sign-on", sub: "authentication points at Keycloak" },
   { line: 108, beat: 55, step: "DKIM", title: "Signed mail", sub: "RSA DKIM key for the domain" },
   { line: 133, beat: 62, step: "KEYCLOAK", title: "Webmail client", sub: "registered in Keycloak" },
@@ -44,10 +44,10 @@ function build(stage) {
     <div class="full" data-k="world">
       <div class="shot" data-k="s1">
         <div data-k="term" class="abs term" style="left:80px;top:140px;width:1120px;height:900px">
-          <div class="bar"><i></i><i></i><i></i><span class="t mono" style="font-size:20px;color:var(--ink3);margin-left:18px">infinito-nexus — deploy</span></div>
+          <div class="bar"><i></i><i></i><i></i><span class="t mono" style="font-size:20px;color:var(--ink3);margin-left:18px">${SCENE_DATA.terminal}</span></div>
           <div class="abs row" style="left:28px;top:70px;height:40px"><span class="t mono" style="font-size:24px;color:var(--accent2)">$&nbsp;</span><span data-k="cmd" class="t mono" style="font-size:24px"></span><span data-k="caret" style="width:12px;height:28px;margin-left:4px;background:var(--ink)"></span></div>
           <div class="abs" style="left:0;top:122px;width:1120px;height:${ROWS * ROW_H}px;overflow:hidden">
-            <div data-k="hl" class="abs" style="left:0;width:1120px;height:${ROW_H}px;background:rgba(20,44,173,0.55);border-left:5px solid var(--accent2)"></div>
+            <div data-k="hl" class="abs" style="left:0;width:1120px;height:${ROW_H}px;background:color-mix(in srgb, var(--accent) 55%, transparent);border-left:5px solid var(--accent2)"></div>
             <div data-k="rows" class="abs" style="left:28px;top:0;width:1070px">
               ${Array.from({ length: ROWS }, (_, i) => `<div data-k="r${i}" class="row-line mono"></div>`).join("")}
             </div>
@@ -60,7 +60,7 @@ function build(stage) {
           <div class="mask" style="height:50px;margin-top:6px"><div data-k="cSub" class="t" style="font-size:32px;font-weight:500;color:var(--ink2)">&nbsp;</div></div>
           <div class="row" style="gap:10px;margin-top:40px">${STOPS.map((_, i) => `<div data-k="dot${i}" style="width:44px;height:6px;border-radius:3px;background:var(--hair)"></div>`).join("")}</div>
         </div>
-        <div data-k="recap" class="abs center" style="left:0;top:470px;width:1920px;height:220px;background:rgba(10,13,26,0.92);border-top:2px solid var(--accent2);border-bottom:2px solid var(--accent2);flex-direction:column;gap:18px">
+        <div data-k="recap" class="abs center" style="left:0;top:470px;width:1920px;height:220px;background:color-mix(in srgb, var(--bg) 92%, transparent);border-top:2px solid var(--accent2);border-bottom:2px solid var(--accent2);flex-direction:column;gap:18px">
           <div class="t mono" style="font-size:34px;color:var(--ink2)">ok=<span data-k="okN">0</span>&nbsp;&nbsp;changed=306&nbsp;&nbsp;unreachable=0</div>
           <div data-k="failed" class="t mono" style="font-size:88px;color:var(--ink)">failed=<span style="color:var(--accent2)">0</span></div>
         </div>

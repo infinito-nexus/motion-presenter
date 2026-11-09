@@ -2,7 +2,7 @@ film({ W: 1920, H: 1080, BPM: 110.0, BEATS: 140 });
 
 const HL = [
   { k: "h0", x: 676, y: 409, w: 568, h: 24, t0: 21.4, t1: 28.8, cy: 340, step: "SPAM FILTER", title: "X-Spam-Status: No", sub: "Checked by the spam filter, let through." },
-  { k: "h1", x: 676, y: 427, w: 568, h: 206, t0: 29.0, t1: 46.0, cy: 440, step: "DKIM", title: "Two signatures", sub: "Ed25519 and RSA, for d=infinito.test.\nOther mail servers can verify it." },
+  { k: "h1", x: 676, y: 427, w: 568, h: 206, t0: 29.0, t1: 46.0, cy: 440, step: "DKIM", title: "Two signatures", sub: `Ed25519 and RSA, for d=${SCENE_DATA.domain}.\nOther mail servers can verify it.` },
   { k: "h2", x: 676, y: 649, w: 568, h: 44, t0: 46.2, t1: 55.0, cy: 590, step: "ANTIVIRUS", title: "X-Virus-Scanned", sub: "clamav-milter · status: Clean" },
 ];
 const RECAP = ["Spam checked", "DKIM signed", "Virus scanned"];
@@ -15,11 +15,11 @@ function build(stage) {
       <div class="abs pill" data-k="kick" style="right:60px;top:960px"><span class="t kicker">04 · RECEIVE</span></div>
 
       <div class="abs pill" data-k="lt" style="left:60px;top:900px;padding:18px 30px">
-        <div class="t" style="font-size:44px;font-weight:800;letter-spacing:-0.02em">Maria Nexus</div><br>
-        <div class="t mono" style="font-size:24px;color:var(--ink2);margin-top:6px">maria@infinito.test · signs in</div>
+        <div class="t" style="font-size:44px;font-weight:800;letter-spacing:-0.02em">${SCENE_DATA.people[0].name}</div><br>
+        <div class="t mono" style="font-size:24px;color:var(--ink2);margin-top:6px">${SCENE_DATA.people[0].mailbox} · signs in</div>
       </div>
 
-      <div class="abs pill" data-k="cap1" style="left:60px;top:940px"><span class="t" style="font-size:36px;font-weight:700">Alejandro's mail is already in her inbox</span></div>
+      <div class="abs pill" data-k="cap1" style="left:60px;top:940px"><span class="t" style="font-size:36px;font-weight:700">${SCENE_DATA.people[1].name.split(" ")[0]}'s mail is already in the inbox</span></div>
       <div class="abs pill" data-k="cap2" style="left:60px;top:940px"><span class="t" style="font-size:36px;font-weight:700">Message headers: what happened on the way</span></div>
 
       ${HL.map((h) => `

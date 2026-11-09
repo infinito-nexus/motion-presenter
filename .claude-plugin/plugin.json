@@ -1,12 +1,14 @@
 {
   "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
-  "name": "motion-designer",
+  "name": "motion-presenter",
   "version": "1.2.0",
-  "description": "A motion designer for Claude Code: launch films of mobile and desktop apps (the real UI in an iPhone or a laptop window) as deterministic HTML films cut to music on the beat, in a chosen style, with an optional natural voiceover, checked frame by frame and rendered to MP4, a muted loop, a poster and one self-contained HTML.",
+  "description": "Films from code: motion-designer makes launch films and short videos (the real UI in an iPhone or a laptop window) as deterministic HTML films cut to music on the beat, voiced, checked frame by frame and rendered; motion-presenter turns it into narrated multi-chapter presentation series of any product, in a neutral or the user's own theme.",
   "author": {
-    "name": "kaventro",
-    "email": "301901286+kaventro@users.noreply.github.com"
+    "name": "infinito-nexus"
   },
+  "homepage": "https://github.com/infinito-nexus/motion-presenter",
+  "repository": "https://github.com/infinito-nexus/motion-presenter",
   "license": "MIT",
-  "keywords": ["video", "motion-designer", "launch-film", "promo", "motion-design", "music", "beat-sync", "voiceover", "ios", "macos", "desktop", "app-marketing"]
+  "skills": ["./skills/motion-designer", "./skills/motion-presenter"],
+  "keywords": ["video", "motion-designer", "motion-presenter", "presentation", "demo-series", "launch-film", "motion-design", "music", "beat-sync", "voiceover"]
 }

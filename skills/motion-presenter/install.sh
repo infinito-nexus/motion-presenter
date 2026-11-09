@@ -5,7 +5,7 @@
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-engine="$here/engine/scripts"
+engine="$here/../motion-designer/scripts"
 yes=0 voice=1 kokoro=0
 for arg in "$@"; do
   case "$arg" in
@@ -27,7 +27,7 @@ ask() {
 }
 
 if [ "$(uname -s)" != Linux ] || ! has apt-get; then
-  echo "This installer covers Ubuntu and Debian. Elsewhere, follow README.md and run engine/scripts/doctor.sh." >&2
+  echo "This installer covers Ubuntu and Debian. Elsewhere, follow README.md and run ../motion-designer/scripts/doctor.sh." >&2
   exit 1
 fi
 
@@ -35,12 +35,11 @@ say "System packages"
 pkgs=()
 has ffmpeg || pkgs+=(ffmpeg)
 python3 -c "import PIL" 2>/dev/null || pkgs+=(python3-pil)
-fc-list 2>/dev/null | grep -qi "Inter" || pkgs+=(fonts-inter)
-has unzip || pkgs+=(unzip)
+fc-list 2>/dev/null | grep -qi "DejaVu Sans Mono" || pkgs+=(fonts-dejavu-core)
 has curl || pkgs+=(curl)
 dpkg -s gstreamer1.0-libav >/dev/null 2>&1 || pkgs+=(gstreamer1.0-libav)
 if [ "${#pkgs[@]}" -eq 0 ]; then
-  ok "ffmpeg, Pillow, Inter, unzip, curl, AAC playback already installed"
+  ok "ffmpeg, Pillow, DejaVu fonts, curl, AAC playback already installed"
 elif ask "Install ${pkgs[*]} with sudo apt?"; then
   sudo apt-get update
   sudo apt-get install -y "${pkgs[@]}"
@@ -62,19 +61,6 @@ if bash "$engine/doctor.sh" 2>/dev/null | grep -q '✓ chrome'; then
   ok "chrome found"
 elif ask "Install Chrome for Testing (about 150 MB, no sudo)?"; then
   bash "$engine/install.sh" chrome
-fi
-
-say "JetBrains Mono"
-if fc-list 2>/dev/null | grep -qi "JetBrains Mono"; then
-  ok "JetBrains Mono found"
-elif ask "Download JetBrains Mono into ~/.local/share/fonts?"; then
-  tmp="$(mktemp -d)"
-  curl -fsSL -o "$tmp/jbm.zip" https://github.com/JetBrains/JetBrainsMono/releases/download/v2.304/JetBrainsMono-2.304.zip
-  mkdir -p "$HOME/.local/share/fonts/JetBrainsMono"
-  unzip -qo "$tmp/jbm.zip" 'fonts/ttf/*' -d "$tmp"
-  cp "$tmp"/fonts/ttf/*.ttf "$HOME/.local/share/fonts/JetBrainsMono/"
-  fc-cache -f >/dev/null
-  rm -rf "$tmp"
 fi
 
 if [ "$voice" = 1 ]; then
@@ -101,17 +87,7 @@ else
   ok "nothing to do"
 fi
 
-say "Link the skill into Claude Code"
-target="$HOME/.claude/skills/presentaitor"
-if [ -e "$target" ]; then
-  ok "$target already exists"
-else
-  mkdir -p "$HOME/.claude/skills"
-  ln -s "$here" "$target"
-  ok "linked $target"
-fi
-
 say "Check"
 bash "$engine/doctor.sh" || true
 echo
-echo "Done. Restart Claude Code and type /presentaitor."
+echo "Done. The tools are in place; the skills installer links the skills (see the repository README)."

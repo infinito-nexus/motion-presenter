@@ -5,8 +5,8 @@ Usage (through film.py):
     film.py playground --check [--out DIR]    also load every page headless, seek it and save stills
     film.py playground --apply FILE.json      merge exported slider values into preset-defaults.js
 
-Adding a technique: its function in engine/templates/shared/presets.js, its defaults in
-preset-defaults.js, and a preset(name, {...}) page in engine/playground/demos.js. It enters
+Adding a technique: its function in ../motion-designer/templates/shared/presets.js, its defaults in
+preset-defaults.js, and a preset(name, {...}) page in ../motion-designer/playground/demos.js. It enters
 the library only after its playground page has been reviewed.
 """
 import argparse
@@ -17,7 +17,7 @@ import subprocess
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-ENGINE = HERE.parent / "engine"
+ENGINE = HERE.parent.parent / "motion-designer"
 SHARED = ENGINE / "templates" / "shared"
 DEFAULTS = SHARED / "preset-defaults.js"
 
@@ -62,7 +62,7 @@ def apply(path, target=DEFAULTS):
 def main(argv):
     ap = argparse.ArgumentParser(prog="film.py playground")
     ap.add_argument("preset", nargs="?")
-    ap.add_argument("--out", default="/tmp/presentaitor-playground")
+    ap.add_argument("--out", default="/tmp/motion-presenter-playground")
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--apply")
     ap.add_argument("--defaults", default=str(DEFAULTS))

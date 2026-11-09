@@ -13,7 +13,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "engine" / "scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "motion-designer" / "scripts"))
 from voiceover import duration, trimmed  # noqa: E402
 
 GAP = 0.25

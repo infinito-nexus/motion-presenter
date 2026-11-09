@@ -1,8 +1,9 @@
 film({ W: 1920, H: 1080, BPM: 110.0, BEATS: 80 });
 
 const SHOTS = [];
-const CHAPTERS = ["Deploy", "Mail", "Filters", "Admin", "Calendars", "Tor"];
 const CHAPTER_BEATS = [58, 60, 62, 66, 69, 72];
+const CHAPTERS = SCENE_DATA.chapters.slice(0, CHAPTER_BEATS.length);
+const TITLE = `${SCENE_DATA.product} ${SCENE_DATA.version}`;
 const TILES = [
   { k: "tMail", label: "Mail", icon: '<rect x="8" y="18" width="84" height="60" rx="8"/><path d="M10 22 L50 52 L90 22"/>' },
   { k: "tCal", label: "Calendars", icon: '<rect x="10" y="18" width="80" height="66" rx="8"/><path d="M10 38 H90 M32 10 V26 M68 10 V26"/><path d="M28 54 H40 M46 54 H58 M64 54 H76 M28 68 H40 M46 68 H58"/>' },
@@ -34,8 +35,8 @@ function build(stage) {
           <rect x="8" y="22" width="84" height="56" rx="6"/><path data-k="flap" d="M10 26 L50 54 L90 26"/>
         </svg>
         <div data-k="server" class="abs" style="left:610px;top:300px;width:700px;height:400px;border:3px solid var(--accent2);border-radius:22px;background:var(--bg2)">
-          <div class="abs" style="left:40px;top:44px;right:40px;height:76px;border-radius:12px;background:rgba(79,107,255,0.10);border:2px solid var(--hair)"></div>
-          <div class="abs" style="left:40px;top:144px;right:40px;height:76px;border-radius:12px;background:rgba(79,107,255,0.10);border:2px solid var(--hair)"></div>
+          <div class="abs" style="left:40px;top:44px;right:40px;height:76px;border-radius:12px;background:color-mix(in srgb, var(--accent2) 10%, transparent);border:2px solid var(--hair)"></div>
+          <div class="abs" style="left:40px;top:144px;right:40px;height:76px;border-radius:12px;background:color-mix(in srgb, var(--accent2) 10%, transparent);border:2px solid var(--hair)"></div>
           <div data-k="led1" class="abs" style="left:70px;top:72px;width:20px;height:20px;border-radius:50%;background:var(--accent2)"></div>
           <div data-k="led2" class="abs" style="left:70px;top:172px;width:20px;height:20px;border-radius:50%;background:var(--accent2)"></div>
           <div class="abs mask" style="left:40px;top:262px;width:640px;height:90px"><div data-k="domain" class="t mono" style="font-size:44px;color:var(--ink)">&nbsp;</div></div>
@@ -63,7 +64,7 @@ function build(stage) {
 
       <div class="shot center" data-k="s5" style="flex-direction:column">
         ${kicker("k5", "THE MAIL SERVER", 0, 330, 1920)}
-        <div data-k="stalwart" class="t" style="font-size:220px;font-weight:800;letter-spacing:-0.045em">Stalwart</div>
+        <div data-k="big" class="t" style="font-size:220px;font-weight:800;letter-spacing:-0.045em">${SCENE_DATA.component}</div>
         <svg class="abs" style="left:560px;top:700px;overflow:visible" width="800" height="20" viewBox="0 0 800 20"><path data-k="under" d="M0 10 L800 10" stroke="var(--accent2)" stroke-width="10" stroke-linecap="round"/></svg>
       </div>
 
@@ -79,7 +80,7 @@ function build(stage) {
 
       <div class="shot center" data-k="s7" style="flex-direction:column;gap:36px">
         <img data-k="logo2" src="${ASSETS.img.logo}" style="width:220px;height:220px;border-radius:50%">
-        <div data-k="title2" class="t mono" style="font-size:56px">Infinito.Nexus 15.0</div>
+        <div data-k="title2" class="t mono" style="font-size:56px">${TITLE}</div>
       </div>
     </div>
     ${scanLayer(0.06)}
@@ -105,7 +106,7 @@ function apply(t) {
   const lg = spring(t, B(1) + 0.1, 0.5, 0.8);
   $.logo1.style.opacity = clamp(lg * 1.4).toFixed(3);
   setT($.logo1, `scale(${(0.6 + 0.4 * lg).toFixed(4)})`);
-  $.title1.innerHTML = t < B(3) ? "&nbsp;" : scramble("Infinito.Nexus 15.0", t, B(3), 1.0, 2);
+  $.title1.innerHTML = t < B(3) ? "&nbsp;" : scramble(TITLE, t, B(3), 1.0, 2);
 
   rise($.k2, prog(t, B(9) + 0.3, 0.5, E.out));
   rise($.mail2, prog(t, B(9) + 0.4, 0.5, E.out));
@@ -124,7 +125,7 @@ function apply(t) {
   $.server.style.opacity = grow.toFixed(3);
   setT($.server, `scale(${(0.45 + 0.55 * grow).toFixed(4)})`);
   rise($.k3, prog(t, B(19) + 0.3, 0.5, E.out));
-  $.domain.textContent = t < B(21) ? " " : typewriter("mail.your-domain.org", t, B(21), 18);
+  $.domain.textContent = t < B(21) ? " " : typewriter(`mail.${SCENE_DATA.domain}`, t, B(21), 18);
   $.led1.style.opacity = (0.45 + 0.55 * (0.5 + 0.5 * Math.cos((t - B(21)) * 7))).toFixed(3);
   $.led2.style.opacity = (0.45 + 0.55 * (0.5 + 0.5 * Math.cos((t - B(21)) * 5 + 1))).toFixed(3);
 
@@ -147,9 +148,9 @@ function apply(t) {
 
   rise($.k5, prog(t, B(49) + 0.2, 0.5, E.out));
   const rev = spring(t, B(49), 0.4, 0.75);
-  $.stalwart.style.opacity = clamp(rev * 1.5).toFixed(3);
-  setT($.stalwart, `scale(${(0.86 + 0.14 * rev).toFixed(4)})`);
-  if (t >= B(49) && t < B(53)) glitch($.stalwart, t, B(49) + 0.05, 0.25, 10);
+  $.big.style.opacity = clamp(rev * 1.5).toFixed(3);
+  setT($.big, `scale(${(0.86 + 0.14 * rev).toFixed(4)})`);
+  if (t >= B(49) && t < B(53)) glitch($.big, t, B(49) + 0.05, 0.25, 10);
   drawPath($.under, prog(t, B(50), 0.7, E.inOut));
 
   rise($.k6, prog(t, B(57) + 0.2, 0.5, E.out));
@@ -159,7 +160,7 @@ function apply(t) {
     const el = $["ch" + i];
     el.style.opacity = (0.28 + 0.72 * on).toFixed(3);
     el.style.borderColor = on > 0.5 ? "var(--accent2)" : "var(--hair)";
-    el.style.background = on > 0.5 ? "rgba(20,44,173,0.35)" : "transparent";
+    el.style.background = on > 0.5 ? "color-mix(in srgb, var(--accent) 35%, transparent)" : "transparent";
     setT(el, `translateY(${(-14 * on).toFixed(1)}px)`);
   });
 

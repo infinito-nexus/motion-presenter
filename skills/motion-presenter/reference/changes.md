@@ -9,7 +9,8 @@ Read when the user wants to change something in a film or series that is already
 | Voice or music loudness | `mix.music_gain` (+-0.05), `duck_ratio` | `film.py render ...`: takes and every scene are reused, only the mix and the mux run | no |
 | Music track or section | new track in `audio/source/`, `beats.py`, `music_edit.py`, at least as long as the film | `film.py render ...` | only if `"bpm"` changes (scene ends snap to half beats) |
 | On-screen text, callouts, plates, presets | `<film>/src/scenes.js` | `film.py preview <film>`, then render | yes, that chapter (the page code is part of every scene's cache key) |
-| Brand colours or fonts | `<film>/src/film.css`, re-pack `assets.js` | render | yes, every affected chapter |
+| Theme colours, fonts or logo | `<film>/src/film.css` tokens (`reference/theme.md`), re-pack `assets.js` | render | yes, every affected chapter |
+| Names, titles, versions on screen | `scenes.json` (`reference/scenes.md`) | `film.py preview <film>`, then render | yes, the chapters that show them |
 | Footage | `"footage"` and the lines' `"clip"` in `voiceover.json` | render | the scenes whose clips changed |
 | Output format | `Output:` in `SERIES.md` | `film.py join <series>` | no |
 

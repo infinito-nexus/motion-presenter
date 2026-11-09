@@ -1,6 +1,6 @@
 const DEMO_APP = `
   <div class="full" style="background:#f5f6f9;color:#1b1f29;font:20px/1.3 system-ui,sans-serif">
-    <div class="abs" style="left:0;top:0;bottom:0;width:240px;height:100%;background:#1b1f29;color:#cfd5e2;padding:28px 22px">◆ Nexus<br><br>Dashboard<br>Projects<br>Deploys</div>
+    <div class="abs" style="left:0;top:0;bottom:0;width:240px;height:100%;background:#1b1f29;color:#cfd5e2;padding:28px 22px">◆ Acme<br><br>Dashboard<br>Projects<br>Deploys</div>
     <div class="abs" style="left:240px;right:0;top:0;width:1200px;height:80px;background:#fff;border-bottom:1px solid #e3e6ee;padding:26px 32px;font-weight:700">Projects</div>
     <div class="abs" data-r style="left:290px;top:130px;width:560px;height:330px;background:#fff;border:1px solid #e3e6ee;border-radius:16px;padding:22px">Create project</div>
     <div class="abs" data-r style="left:290px;top:490px;width:560px;height:110px;background:#fff;border:1px solid #e3e6ee;border-radius:16px;padding:22px">Ready to ship <span style="float:right;background:#3b6cf5;color:#fff;border-radius:10px;padding:8px 18px">Deploy</span></div>
@@ -123,7 +123,7 @@ preset("tilt", {
   html: () => `<div class="full" style="background:radial-gradient(circle at 50% 30%,#2a3348,#0b0e15)">
     <div data-k="shadow" class="abs" style="left:50%;top:750px;width:900px;height:80px;margin-left:-450px;border-radius:50%;background:radial-gradient(rgba(0,0,0,.55),transparent 70%)"></div>
     <div data-k="wrap" class="full"><div data-k="screen" class="abs" style="left:50%;top:50%;width:960px;height:600px;margin:-300px 0 0 -480px;border-radius:22px;background:#f5f6f9;border:14px solid #15181f;overflow:hidden">
-      <div style="height:56px;background:#fff;border-bottom:1px solid #e3e6ee;padding:14px 22px;font:700 22px system-ui;color:#1b1f29">◆ Nexus · Projects</div>
+      <div style="height:56px;background:#fff;border-bottom:1px solid #e3e6ee;padding:14px 22px;font:700 22px system-ui;color:#1b1f29">◆ Acme · Projects</div>
       <div data-k="gloss" class="full"></div></div></div></div>`,
   frame(t, P) { const r = tilt(t, 0.2, { wrap: $.wrap, screen: $.screen, gloss: $.gloss, shadow: $.shadow }, P); return { rotateX: +r.rx.toFixed(2), rotateY: +r.ry.toFixed(2) }; },
 });
@@ -140,7 +140,7 @@ preset("aurora", {
   what: "Aurora background: four radial-gradient blobs on sine paths, no CSS blur (ticket 07)",
   dur: 8,
   params: [["speed", "Speed", 0.1, 3, 0.05], ["size", "Blob size", 0.4, 2, 0.05], ["intensity", "Intensity", 0.2, 1, 0.05]],
-  html: () => `<div class="full" style="background:#07080d"></div>${auroraLayer()}<div class="full" style="display:flex;align-items:center;justify-content:center;font:800 110px system-ui;color:#fff">Infinito Nexus</div>`,
+  html: () => `<div class="full" style="background:#07080d"></div>${auroraLayer()}<div class="full" style="display:flex;align-items:center;justify-content:center;font:800 110px system-ui;color:#fff">Acme</div>`,
   frame(t, P) { aurora(t, P); return {}; },
 });
 

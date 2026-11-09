@@ -1,3 +1,20 @@
+# motion-presenter
+
+A fork of [kaventro/motion-designer](https://github.com/kaventro/motion-designer) at upstream commit `7d0b8bb`, with two skills:
+
+- `skills/motion-designer`: the upstream engine plus Alejandro Roman's engine additions (voice-first timing, the silence check, footage cuts, 14 motion presets and their playground) and separate security fixes. Upstream is merged in with `git merge`.
+- `skills/motion-presenter`: narrated multi-chapter presentation series on top of the engine, by Alejandro Roman. It carries no brand and no project data: the [theme](skills/motion-presenter/reference/theme.md) and the [scene data](skills/motion-presenter/reference/scenes.md) are inputs with neutral defaults.
+
+Install both skills:
+
+```bash
+npx skills add infinito-nexus/motion-presenter
+```
+
+As a Claude Code plugin: `/plugin install motion-presenter --marketplace infinito-nexus/motion-presenter`.
+
+[NOTICE](NOTICE) names the upstream commit, the changed upstream files and the credits of every shipped medium. The upstream README follows.
+
 # motion-designer
 
 An agent skill for Claude Code and Codex that makes launch films for apps, and other short videos from code:
