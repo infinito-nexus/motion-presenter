@@ -1,0 +1,100 @@
+motion-presenter
+================
+
+A fork of motion-designer by kaventro, https://github.com/kaventro/motion-designer,
+at upstream commit 7d0b8bb ("Add motion blur, a phone-size review and scored
+reviews (#8)"). MIT licence, see LICENSE; every addition is released under the
+same licence.
+
+Contributors
+------------
+
+- kaventro: motion-designer (upstream).
+- Alejandro Roman: the engine additions in skills/motion-designer and the
+  skills/motion-presenter series layer, released under MIT.
+- Kevin Veen-Birkenbach: the security fixes and the adaptation (neutral theme,
+  scene data input, packaging).
+
+Changed upstream files
+----------------------
+
+Modified:
+
+  skills/motion-designer/SKILL.md (description quoted)
+  skills/motion-designer/reference/voiceover.md
+  skills/motion-designer/scripts/build_single.py
+  skills/motion-designer/scripts/cdp.mjs
+  skills/motion-designer/scripts/install.sh
+  skills/motion-designer/scripts/music_edit.py
+  skills/motion-designer/scripts/music_gen.py
+  skills/motion-designer/scripts/render.mjs
+  skills/motion-designer/scripts/tts_chatterbox.py
+  skills/motion-designer/scripts/voiceover.py
+  skills/motion-designer/templates/blank/film.css
+  skills/motion-designer/templates/desktop/film.css
+  skills/motion-designer/templates/mobile/film.css
+  skills/motion-designer/templates/mobile/scenes.js
+  skills/motion-designer/templates/overlay/film.css
+  skills/motion-designer/templates/overlay/scenes.js
+  skills/motion-designer/templates/shared/core.js
+  skills/motion-designer/templates/shared/index.html
+  skills/motion-designer/templates/shared/main.js
+  skills/motion-designer/templates/story/device.js
+  skills/motion-designer/templates/story/film.css
+  skills/motion-designer/templates/story/scenes.js
+  tests/test_plugin.py (the second skill)
+  README.md (the fork section on top)
+  .claude-plugin/plugin.json
+  .claude-plugin/marketplace.json
+
+Added to the engine:
+
+  skills/motion-designer/playground/check.mjs
+  skills/motion-designer/playground/demos.js
+  skills/motion-designer/playground/page.html
+  skills/motion-designer/scripts/camera.mjs
+  skills/motion-designer/scripts/footage.py
+  skills/motion-designer/scripts/silence.py
+  skills/motion-designer/scripts/timing.py
+  skills/motion-designer/templates/shared/preset-defaults.js
+  skills/motion-designer/templates/shared/presets.js
+  skills/motion-designer/templates/shared/timing.js
+  tests/test_silence.py
+  tests/test_timing.py
+
+Added: skills/motion-presenter (the series layer) and this NOTICE.
+
+Media shipped by the fork
+-------------------------
+
+skills/motion-presenter/defaults/music/pulse.mp3
+  "pulse", original, made with ACE-Step 1.5 (acestep-v15-turbo,
+  acestep-5Hz-lm-1.7B), rendered locally, seed 42, 2026-10-14. ACE-Step code
+  and weights are MIT; no third-party attribution required.
+  Credit line: "Music: original, made with ACE-Step 1.5"
+
+skills/motion-presenter/defaults/music/industrial-cinematic.mp3
+  "Industrial Cinematic" by Kevin MacLeod (incompetech.com),
+  https://incompetech.com/music/royalty-free/mp3-royaltyfree/Industrial%20Cinematic.mp3
+  Licensed under Creative Commons: By Attribution 4.0,
+  https://creativecommons.org/licenses/by/4.0/
+  Every film that uses it carries this credit on an end card or in its
+  description: "Industrial Cinematic" Kevin MacLeod (incompetech.com),
+  Licensed under Creative Commons: By Attribution 4.0 License,
+  http://creativecommons.org/licenses/by/4.0/
+
+skills/motion-presenter/defaults/music/grid.json, grid-pulse.json
+  Beat grids measured from the two tracks above.
+
+skills/motion-presenter/defaults/voice/narrator.wav
+  "Bella", a synthetic voice generated locally with Kokoro-82M (Apache-2.0),
+  voice af_bella, 2026-10-07. No person's voice and no third-party service
+  terms are involved; the consent terms and the spoken text are in
+  skills/motion-presenter/defaults/voice/CONSENT.md. Speech made from it with
+  Chatterbox carries Resemble AI's inaudible watermark.
+
+skills/motion-presenter/defaults/theme/logo.svg
+  A neutral placeholder mark made for this fork, MIT.
+
+The upstream examples, docs and fonts keep their own credits: see the
+"License" section of README.md and the OFL files next to each font.
