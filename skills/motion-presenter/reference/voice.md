@@ -5,7 +5,8 @@ Read before the first `tools/film.py` run.
 ## Setup
 
 - Chatterbox must be installed once: `bash <SKILL>/../motion-designer/scripts/install.sh chatterbox` (about 4 GB). Kokoro is the light fallback, but its delivery is flat; use it only for timing drafts.
-- In the sandbox the venv and `~/.cache` are read-only. `film.py` sets `NUMBA_CACHE_DIR` and `HF_HOME` under `/tmp/motion-presenter-cache` (`MOTION_PRESENTER_CACHE`); the first run downloads the weights (about 3 GB) there, and they vanish on reboot. To keep them: `cp -r /tmp/motion-presenter-cache/hf/hub/* ~/.cache/huggingface/hub/` outside the sandbox, then run with `HF_HOME=~/.cache/huggingface`.
+- `film.py` keeps `NUMBA_CACHE_DIR` in `MOTION_PRESENTER_CACHE` (default `~/.cache/motion-presenter`, the user's own). The weights (about 3 GB, at the revision pinned in `tts_chatterbox.py`) load from `~/.cache/huggingface` once its `hub/models--ResembleAI--chatterbox` exists, offline; otherwise the first run downloads them into `MOTION_PRESENTER_CACHE/hf`.
+- Inside an agent sandbox that keeps `~/.cache` read-only or blocks huggingface.co, set `MOTION_PRESENTER_CACHE` to a writable folder of the same user, and ask the user to run the first voice job (or the install) in their own terminal so the weights land in `~/.cache/huggingface`. Never copy weights between caches by hand.
 
 ## Running
 

@@ -1,6 +1,6 @@
 # /// script
 # requires-python = ">=3.9"
-# dependencies = ["pillow"]
+# dependencies = ["pillow==12.3.0"]
 # ///
 import glob
 import sys

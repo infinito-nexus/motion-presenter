@@ -25,7 +25,7 @@ The repository README has the install command; it installs both skills side by s
 bash <skills folder>/motion-presenter/install.sh
 ```
 
-It checks each requirement below, installs only what is missing, asks before every `sudo` step, and ends with a full check. Options: `--yes` answers yes to everything, `--no-voice` skips the 4 GB Chatterbox install, and `--kokoro` adds the small draft voices. Running it again is safe. It does not link the skills anywhere; the skills installer owns that.
+It checks each requirement below, installs only what is missing, asks before every install (an empty answer or no terminal means no), and ends with a full check. Options: `--yes` answers yes to everything, `--no-voice` skips the 4 GB Chatterbox install, and `--kokoro` adds the small draft voices. Running it again is safe. It does not link the skills anywhere; the skills installer owns that. The single installs below ask the same way; add `--yes` once you agreed to the command they print.
 
 On other systems, install the tables below by hand and run `../motion-designer/scripts/doctor.sh`.
 
@@ -55,7 +55,7 @@ bash <skills folder>/motion-designer/scripts/doctor.sh
 | Chatterbox | about 4 GB, plus about 3 GB of model weights on first use | clones the narrator from `defaults/voice/narrator.wav` | `bash ../motion-designer/scripts/install.sh chatterbox` |
 | Kokoro (optional) | about 0.6 GB | fast preset voices for timing drafts only; flatter delivery | `bash ../motion-designer/scripts/install.sh kokoro` |
 
-Keep the model weights out of `/tmp` so they survive a reboot: run the voice pipeline once, then `cp -r /tmp/motion-presenter-cache/hf/hub/* ~/.cache/huggingface/hub/`, and from then on set `HF_HOME=~/.cache/huggingface`.
+Versions and model revisions are pinned (`setup_tts.sh`, `setup_kokoro.sh` with sha256 checks, `tts_chatterbox.py`, `setup_music.sh`). The weights land in `~/.cache/huggingface` and later runs use them offline; caches live in `~/.cache/motion-presenter` (`MOTION_PRESENTER_CACHE`), never in a shared `/tmp` folder.
 
 ### Fonts
 

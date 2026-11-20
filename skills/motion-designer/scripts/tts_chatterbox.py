@@ -11,16 +11,29 @@ import torchaudio
 
 DEVICE = "mps" if torch.backends.mps.is_available() else "cuda" if torch.cuda.is_available() else "cpu"
 SEEDS = (1, 2, 3)
+REVISIONS = {
+    "ResembleAI/chatterbox": "5bb1f6ee58e50c3b8d408bc82a6d3740c2db6e18",
+    "ResembleAI/chatterbox-turbo": "749d1c1a46eb10492095d68fbcf55691ccf137cd",
+}
 lines = json.loads(Path(sys.argv[1]).read_text())
 cache = Path(sys.argv[2])
 _model = None
+
+
+def weights(repo, files=None):
+    from huggingface_hub import hf_hub_download, snapshot_download
+    if files:
+        return Path([hf_hub_download(repo, f, revision=REVISIONS[repo]) for f in files][0]).parent
+    return snapshot_download(repo_id=repo, revision=REVISIONS[repo],
+                             allow_patterns=["*.safetensors", "*.json", "*.txt", "*.pt", "*.model"])
 
 
 def model():
     global _model
     if _model is None:
         from chatterbox.tts import ChatterboxTTS
-        _model = ChatterboxTTS.from_pretrained(device=DEVICE)
+        files = ["ve.safetensors", "t3_cfg.safetensors", "s3gen.safetensors", "tokenizer.json", "conds.pt"]
+        _model = ChatterboxTTS.from_local(weights("ResembleAI/chatterbox", files), DEVICE)
     return _model
 
 
@@ -28,7 +41,7 @@ def turbo_sample(voice):
     path = cache / f"{voice}-voice.wav"
     if not path.exists():
         from chatterbox.tts_turbo import ChatterboxTurboTTS
-        turbo = ChatterboxTurboTTS.from_pretrained(device=DEVICE)
+        turbo = ChatterboxTurboTTS.from_local(weights("ResembleAI/chatterbox-turbo"), DEVICE)
         torch.manual_seed(11)
         wav = turbo.generate("Hi there. Let me show you something simple. You add what you spend, and you always know "
                              "where your money went, what is left for the month, and what comes next.")

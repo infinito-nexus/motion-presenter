@@ -37,7 +37,9 @@ export async function openPage(url, { width = 1440, height = 1440, scale = 1 } =
   const chrome = spawn(CHROME, [
     ...headless, "--disable-gpu", "--hide-scrollbars", "--mute-audio",
     "--run-all-compositor-stages-before-draw", "--disable-low-res-tiling", "--disable-partial-raster",
-    "--allow-file-access-from-files", `--force-device-scale-factor=${scale}`,
+    "--disable-background-networking", "--proxy-server=127.0.0.1:9", "--proxy-bypass-list=<-loopback>",
+    "--host-resolver-rules=MAP * ~NOTFOUND", "--force-webrtc-ip-handling-policy=disable_non_proxied_udp",
+    `--force-device-scale-factor=${scale}`,
     `--window-size=${width},${height}`, "--remote-debugging-port=0",
     `--user-data-dir=${profile}`, "about:blank",
   ], { stdio: ["ignore", "ignore", "pipe"] });

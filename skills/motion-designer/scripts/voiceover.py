@@ -136,12 +136,12 @@ def speak(spec, backend, cache, tmp, attempt=0):
     (tmp / "lines.json").write_text(json.dumps(jobs))
     if backend == "kokoro":
         if not KOKORO_PYTHON.exists():
-            raise SystemExit(f"Kokoro is not set up at {KOKORO_PYTHON}. Ask the user, then run: bash {HERE / 'install.sh'} kokoro "
+            raise SystemExit(f"Kokoro is not set up at {KOKORO_PYTHON}. Ask the user; after their yes run: bash {HERE / 'install.sh'} kokoro --yes "
                              f"(a local Python environment, about 0.6 GB). Or draft with --backend say.")
         subprocess.run([str(KOKORO_PYTHON), str(HERE / "tts_kokoro.py"), str(tmp / "lines.json"), str(cache)], check=True)
         return todo
     if not TTS_PYTHON.exists():
-        raise SystemExit(f"Chatterbox is not set up at {TTS_PYTHON}. Ask the user, then run: bash {HERE / 'install.sh'} chatterbox "
+        raise SystemExit(f"Chatterbox is not set up at {TTS_PYTHON}. Ask the user; after their yes run: bash {HERE / 'install.sh'} chatterbox --yes "
                          f"(a local Python environment, about 4 GB), or choose --backend kokoro. Or draft with --backend say.")
     subprocess.run([str(TTS_PYTHON), str(HERE / "tts_chatterbox.py"), str(tmp / "lines.json"), str(cache)], check=True)
     return todo
@@ -210,6 +210,9 @@ def main():
     a = ap.parse_args()
     path = Path(a.script).resolve()
     spec = json.loads(path.read_text())
+    bad = [str(x["id"]) for x in spec["lines"] + spec.get("scenes", []) if not timing.ID.fullmatch(str(x["id"]))]
+    if bad:
+        raise SystemExit(f"ids {bad}: use letters, digits, '-' and '_' only")
     base = path.parent
     backend = a.backend or spec.get("backend", "chatterbox")
     fps = spec.get("fps", 60)

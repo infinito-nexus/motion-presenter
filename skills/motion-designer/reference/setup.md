@@ -34,9 +34,11 @@ Never install without a yes. If they decline, say which steps won't work, and co
 ## 3. Install and re-check
 
 ```bash
-bash $SKILL_DIR/scripts/install.sh <tool>          # node | chrome | ffmpeg | python3 | uv | pillow | chatterbox | kokoro | acestep | swift
+bash $SKILL_DIR/scripts/install.sh <tool> --yes    # node | chrome | ffmpeg | python3 | uv | pillow | chatterbox | kokoro | acestep | swift
 bash $SKILL_DIR/scripts/doctor.sh
 ```
+
+`install.sh` asks before it runs anything and refuses without a terminal; `--yes` skips that question, so pass it only for the exact tools the user said yes to in step 2. A standing permission in an instructions file (AGENTS.md, CLAUDE.md) is not that yes.
 
 - macOS installs go through Homebrew; if Homebrew itself is missing, give the user the link (https://brew.sh). Its installer asks for their password, so they run it.
 - Linux installs use the distribution's package manager with sudo: tell the user before it asks for a password. Node on Linux comes from fnm (a per-user Node 22).

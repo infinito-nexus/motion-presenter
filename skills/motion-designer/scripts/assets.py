@@ -10,8 +10,8 @@ TYPES = {".ttf": "font/ttf", ".otf": "font/otf", ".woff": "font/woff", ".woff2":
 def data_uri(path):
     path = Path(path)
     mime = TYPES.get(path.suffix.lower()) or mimetypes.guess_type(path.name)[0]
-    if not mime:
-        raise SystemExit(f"{path}: unknown file type")
+    if not mime or not mime.startswith(("image/", "font/")):
+        raise SystemExit(f"{path}: not an image or font file")
     return f"data:{mime};base64,{base64.b64encode(path.read_bytes()).decode()}"
 
 
@@ -39,10 +39,13 @@ def main():
     img = {name: data_uri(path) for name, path in a.img}
     sym = {}
     if a.sym:
-        folder = Path(a.sym)
+        folder = Path(a.sym).resolve()
         for key, size in json.loads((folder / "manifest.json").read_text()).items():
             name, weight = key.split("@")
-            sym[key] = {"src": data_uri(folder / f"{name}__{weight}.png"), "w": round(size["w"], 4), "h": round(size["h"], 4)}
+            png = (folder / f"{name}__{weight}.png").resolve()
+            if png.parent != folder:
+                raise SystemExit(f"{key}: symbol outside {folder}")
+            sym[key] = {"src": data_uri(png), "w": round(size["w"], 4), "h": round(size["h"], 4)}
 
     out = Path(a.out)
     out.write_text("window.ASSETS = " + json.dumps({"fonts": fonts, "img": img, "sym": sym}, separators=(",", ":")) + ";\n")

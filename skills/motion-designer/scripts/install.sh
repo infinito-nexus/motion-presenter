@@ -1,15 +1,33 @@
 #!/usr/bin/env bash
+# Param: <tool>     node | chrome | ffmpeg | ffprobe | python3 | uv | pillow | chatterbox | kokoro | acestep | swift | say
+# Param: --dry-run  print the command, run nothing
+# Param: --yes      run without asking; only after the user agreed to the printed command
 set -euo pipefail
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 home="${MOTION_DESIGNER_HOME:-$HOME/.cache/motion-designer}"
-what="${1:?usage: install.sh <tool> [--dry-run]}"
-dry=0
-[ "${2:-}" = "--dry-run" ] && dry=1
+what="${1:?usage: install.sh <tool> [--dry-run] [--yes]}"
+dry=0 yes=0
+for arg in "${@:2}"; do
+  case "$arg" in
+    --dry-run) dry=1 ;;
+    --yes) yes=1 ;;
+    *) echo "unknown option: $arg" >&2; exit 2 ;;
+  esac
+done
 has() { command -v "$1" >/dev/null 2>&1; }
 
 run() {
   echo "+ $*"
-  [ "$dry" = 1 ] || eval "$*"
+  [ "$dry" = 1 ] && return 0
+  if [ "$yes" != 1 ]; then
+    if [ ! -t 0 ]; then
+      echo "No terminal to confirm this; show the command to the user and rerun with --yes once they agree." >&2
+      exit 1
+    fi
+    read -r -p "Run it? [y/N] " reply || exit 1
+    case "$reply" in [yY]*) ;; *) echo "Nothing installed." >&2; exit 1 ;; esac
+  fi
+  eval "$*"
 }
 
 pkg() {
@@ -48,7 +66,7 @@ case "$what" in
     else run "curl -LsSf https://astral.sh/uv/install.sh | sh"; fi ;;
   pillow)
     if has uv; then echo "uv fetches Pillow by itself the first time a contact sheet is made; nothing to install."
-    else run "python3 -m pip install --user pillow"; fi ;;
+    else run "python3 -m pip install --user pillow==12.3.0"; fi ;;
   chatterbox)
     has uv || { echo "Chatterbox's environment is built with uv; install it first (install.sh uv)." >&2; exit 1; }
     run "bash '$here/setup_tts.sh'" ;;

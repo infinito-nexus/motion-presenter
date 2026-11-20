@@ -7,8 +7,9 @@ Output:
     <film>/audio/voiceover-mix.m4a and <film>/out/<name>-voiced.mp4 (picture copied, no re-render).
 
 Chatterbox uses every CPU core, so films run sequentially: two jobs at once are roughly
-100x slower, not 2x. NUMBA_CACHE_DIR and HF_HOME point at /tmp because the sandbox keeps
-the venv and ~/.cache read-only; the first run downloads the weights (about 3 GB) there.
+100x slower, not 2x. NUMBA_CACHE_DIR and the fallback HF_HOME live in MOTION_PRESENTER_CACHE
+(default: the user's own ~/.cache/motion-presenter); inside a sandbox that keeps ~/.cache
+read-only, point it at a writable folder of the same user.
 """
 import os
 import subprocess
@@ -17,7 +18,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ENGINE = HERE.parent.parent / "motion-designer" / "scripts"
-CACHE = Path(os.environ.get("MOTION_PRESENTER_CACHE", "/tmp/motion-presenter-cache"))
+CACHE = Path(os.environ.get("MOTION_PRESENTER_CACHE") or Path(os.environ.get("XDG_CACHE_HOME") or Path.home() / ".cache") / "motion-presenter")
 LOCAL_HF = Path.home() / ".cache" / "huggingface"
 DEFAULT_HF = LOCAL_HF if (LOCAL_HF / "hub" / "models--ResembleAI--chatterbox").exists() else CACHE / "hf"
 ENV = {
