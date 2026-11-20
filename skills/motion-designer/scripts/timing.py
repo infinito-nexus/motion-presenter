@@ -13,8 +13,10 @@ clip ([from, to] seconds of source footage shown during the line).
 """
 import hashlib
 import json
+import re
 from pathlib import Path
 
+ID = re.compile(r"[A-Za-z0-9_-]+")
 GAP = 0.35
 SCENE_GAP = 0.8
 TAIL = SCENE_GAP / 2

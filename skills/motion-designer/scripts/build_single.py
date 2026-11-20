@@ -8,11 +8,19 @@ args = [a for a in sys.argv[1:] if a != "--no-audio"]
 no_audio = "--no-audio" in sys.argv
 src, out = Path(args[0]).resolve(), Path(args[1])
 root = src.parent
+film = root.parent
 html = src.read_text()
 
 
 def local(ref):
     return not re.match(r"(?:[a-z]+:|//|#|\$\{)", ref)
+
+
+def inside(ref):
+    path = (root / ref).resolve()
+    if not path.is_relative_to(film):
+        raise SystemExit(f"{ref}: outside the film folder {film}, refusing to inline it into a shareable file")
+    return path
 
 
 TYPES = {".m4a": "audio/mp4", ".wav": "audio/wav", ".ttf": "font/ttf", ".otf": "font/otf", ".woff2": "font/woff2"}
@@ -27,11 +35,11 @@ def data_uri(path):
 
 
 html = re.sub(r'<link rel="stylesheet" href="([^"]+)">',
-              lambda m: f"<style>\n{(root / m[1]).read_text()}\n</style>" if local(m[1]) else m[0], html)
+              lambda m: f"<style>\n{inside(m[1]).read_text()}\n</style>" if local(m[1]) else m[0], html)
 html = re.sub(r'<script src="([^"]+)"></script>',
-              lambda m: "<script>\n" + (root / m[1]).read_text().replace("</script", "<\\/script") + "\n</script>" if local(m[1]) else m[0], html)
+              lambda m: "<script>\n" + inside(m[1]).read_text().replace("</script", "<\\/script") + "\n</script>" if local(m[1]) else m[0], html)
 html = re.sub(r'(<(img|audio|source|video)\b[^>]*\bsrc=")([^"]+)(")',
-              lambda m: m[1] + ("" if no_audio and m[2] in ("audio", "source") else data_uri(root / m[3])) + m[4] if local(m[3]) else m[0], html)
+              lambda m: m[1] + ("" if no_audio and m[2] in ("audio", "source") else data_uri(inside(m[3]))) + m[4] if local(m[3]) else m[0], html)
 
 left = [r for r in re.findall(r'(?:src|href)="([^"]+)"', html) if not r.startswith(("data:", "${", "#"))]
 if left:

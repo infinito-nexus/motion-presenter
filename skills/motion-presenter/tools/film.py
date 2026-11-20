@@ -25,7 +25,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ENGINE = HERE.parent.parent / "motion-designer" / "scripts"
-CACHE = Path(os.environ.get("MOTION_PRESENTER_CACHE", "/tmp/motion-presenter-cache"))
+CACHE = Path(os.environ.get("MOTION_PRESENTER_CACHE") or Path(os.environ.get("XDG_CACHE_HOME") or Path.home() / ".cache") / "motion-presenter")
 LOCAL_HF = Path.home() / ".cache" / "huggingface"
 ENV = {
     **os.environ,
@@ -41,6 +41,7 @@ PROFILES = {
 sys.path.insert(0, str(ENGINE))
 import footage  # noqa: E402
 import silence  # noqa: E402
+import timing  # noqa: E402
 
 
 def run(*args, **kw):
@@ -178,6 +179,8 @@ def render(film, profile, blur=1):
     seg_dir.mkdir(parents=True, exist_ok=True)
     started, segments, rendered = time.time(), [], []
     for sc in plan["scenes"]:
+        if not timing.ID.fullmatch(sc["id"]):
+            raise SystemExit(f"scene id {sc['id']!r}: use letters, digits, '-' and '_' only")
         f0, f1 = round(sc["start"] * fps), round(sc["end"] * fps)
         seg = seg_dir / f"{sc['id']}.mp4"
         key = digest(profile, fps, f0, f1, sc, [plan["lines"][lid] for lid in sc["lines"]],

@@ -21,13 +21,20 @@ Changed upstream files
 Modified:
 
   skills/motion-designer/SKILL.md (description quoted)
+  skills/motion-designer/reference/harness.md
+  skills/motion-designer/reference/setup.md
   skills/motion-designer/reference/voiceover.md
+  skills/motion-designer/scripts/assets.py
   skills/motion-designer/scripts/build_single.py
   skills/motion-designer/scripts/cdp.mjs
   skills/motion-designer/scripts/install.sh
   skills/motion-designer/scripts/music_edit.py
   skills/motion-designer/scripts/music_gen.py
   skills/motion-designer/scripts/render.mjs
+  skills/motion-designer/scripts/setup_kokoro.sh
+  skills/motion-designer/scripts/setup_music.sh
+  skills/motion-designer/scripts/setup_tts.sh
+  skills/motion-designer/scripts/sheet.py
   skills/motion-designer/scripts/tts_chatterbox.py
   skills/motion-designer/scripts/voiceover.py
   skills/motion-designer/templates/blank/film.css
@@ -59,6 +66,7 @@ Added to the engine:
   skills/motion-designer/templates/shared/preset-defaults.js
   skills/motion-designer/templates/shared/presets.js
   skills/motion-designer/templates/shared/timing.js
+  tests/test_hardening.py
   tests/test_silence.py
   tests/test_timing.py
 

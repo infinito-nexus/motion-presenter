@@ -22,8 +22,12 @@ say() { printf '\n\033[1;34m==>\033[0m %s\n' "$*"; }
 ok() { printf '  \033[32m✓\033[0m %s\n' "$*"; }
 ask() {
   [ "$yes" = 1 ] && return 0
-  read -r -p "  $1 [Y/n] " reply
-  case "$reply" in [nN]*) return 1 ;; *) return 0 ;; esac
+  if [ ! -t 0 ]; then
+    echo "  $1 skipped: no terminal to answer (run it in a terminal, or pass --yes)" >&2
+    return 1
+  fi
+  read -r -p "  $1 [y/N] " reply || return 1
+  case "$reply" in [yY]*) return 0 ;; *) return 1 ;; esac
 }
 
 if [ "$(uname -s)" != Linux ] || ! has apt-get; then
@@ -50,17 +54,17 @@ node_major="$(node -v 2>/dev/null | sed 's/^v\([0-9]*\).*/\1/' || true)"
 if [ -n "$node_major" ] && [ "$node_major" -ge 22 ]; then
   ok "node $(node -v)"
 elif ask "Install Node 22 (fnm, in your home folder, no sudo)?"; then
-  bash "$engine/install.sh" node
+  bash "$engine/install.sh" node --yes
 fi
 
 say "uv"
-if has uv; then ok "uv $(uv --version | cut -d' ' -f2)"; elif ask "Install uv?"; then bash "$engine/install.sh" uv; fi
+if has uv; then ok "uv $(uv --version | cut -d' ' -f2)"; elif ask "Install uv?"; then bash "$engine/install.sh" uv --yes; fi
 
 say "Chrome for rendering"
 if bash "$engine/doctor.sh" 2>/dev/null | grep -q '✓ chrome'; then
   ok "chrome found"
 elif ask "Install Chrome for Testing (about 150 MB, no sudo)?"; then
-  bash "$engine/install.sh" chrome
+  bash "$engine/install.sh" chrome --yes
 fi
 
 if [ "$voice" = 1 ]; then
@@ -68,12 +72,12 @@ if [ "$voice" = 1 ]; then
   if bash "$engine/doctor.sh" 2>/dev/null | grep -q '✓ chatterbox'; then
     ok "chatterbox installed"
   elif ask "Install Chatterbox?"; then
-    bash "$engine/install.sh" chatterbox
+    bash "$engine/install.sh" chatterbox --yes
   fi
 fi
 if [ "$kokoro" = 1 ]; then
   say "Kokoro draft voices"
-  bash "$engine/install.sh" kokoro
+  bash "$engine/install.sh" kokoro --yes
 fi
 
 say "Sound in mpv"
